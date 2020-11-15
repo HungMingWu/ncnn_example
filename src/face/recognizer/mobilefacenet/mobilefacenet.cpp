@@ -7,7 +7,6 @@
 
 namespace mirror {
 Mobilefacenet::Mobilefacenet() {
-	mobileface_net_ = new ncnn::Net();
 	initialized_ = false;
 #if MIRROR_VULKAN
 	ncnn::create_gpu_instance();	
@@ -16,7 +15,6 @@ Mobilefacenet::Mobilefacenet() {
 }
 
 Mobilefacenet::~Mobilefacenet() {
-	mobileface_net_->clear();
 #if MIRROR_VULKAN
 	ncnn::destroy_gpu_instance();
 #endif // MIRROR_VULKAN	
@@ -25,8 +23,8 @@ Mobilefacenet::~Mobilefacenet() {
 int Mobilefacenet::LoadModel(const char * root_path) {
 	std::string fr_param = std::string(root_path) + "/fr.param";
 	std::string fr_bin = std::string(root_path) + "/fr.bin";
-	if (mobileface_net_->load_param(fr_param.c_str()) == -1 ||
-		mobileface_net_->load_model(fr_bin.c_str()) == -1) {
+	if (mobileface_net_.load_param(fr_param.c_str()) == -1 ||
+		mobileface_net_.load_model(fr_bin.c_str()) == -1) {
 		std::cout << "load face recognize model failed." << std::endl;
 		return 10000;
 	}
@@ -52,7 +50,7 @@ int Mobilefacenet::ExtractFeature(const cv::Mat & img_face,
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(face_cpy.data,
 		ncnn::Mat::PIXEL_BGR2RGB, face_cpy.cols, face_cpy.rows, 112, 112);
 	feature->resize(kFaceFeatureDim);
-	ncnn::Extractor ex = mobileface_net_->create_extractor();
+	ncnn::Extractor ex = mobileface_net_.create_extractor();
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("fc1", out);

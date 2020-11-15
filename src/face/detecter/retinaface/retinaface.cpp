@@ -7,7 +7,6 @@
 
 namespace mirror {
 RetinaFace::RetinaFace() :
-	retina_net_(new ncnn::Net()),
 	initialized_(false) {
 #if MIRROR_VULKAN
 	ncnn::create_gpu_instance();	
@@ -17,9 +16,6 @@ RetinaFace::RetinaFace() :
 }
 
 RetinaFace::~RetinaFace() {
-	if (retina_net_) {
-		retina_net_->clear();
-	}
 #if MIRROR_VULKAN
 	ncnn::destroy_gpu_instance();
 #endif // MIRROR_VULKAN	
@@ -28,8 +24,8 @@ RetinaFace::~RetinaFace() {
 int RetinaFace::LoadModel(const char * root_path) {
 	std::string fd_param = std::string(root_path) + "/fd.param";
 	std::string fd_bin = std::string(root_path) + "/fd.bin";
-	if (retina_net_->load_param(fd_param.c_str()) == -1 ||
-		retina_net_->load_model(fd_bin.c_str()) == -1) {
+	if (retina_net_.load_param(fd_param.c_str()) == -1 ||
+		retina_net_.load_model(fd_bin.c_str()) == -1) {
 		std::cout << "load face detect model failed." << std::endl;
 		return 10000;
 	}
@@ -70,7 +66,7 @@ int RetinaFace::DetectFace(const cv::Mat & img_src,
 	int img_height = img_cpy.rows;
 	float factor_x = static_cast<float>(img_width) / inputSize_.width;
 	float factor_y = static_cast<float>(img_height) / inputSize_.height;
-	ncnn::Extractor ex = retina_net_->create_extractor();
+	ncnn::Extractor ex = retina_net_.create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_cpy.data,
 		ncnn::Mat::PIXEL_BGR2RGB, img_width, img_height, inputSize_.width, inputSize_.height);
 	ex.input("data", in);

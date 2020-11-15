@@ -11,7 +11,6 @@
 
 namespace mirror {
 InsightfaceLandmarker::InsightfaceLandmarker() {
-	insightface_landmarker_net_ = new ncnn::Net();
 	initialized = false;
 #if MIRROR_VULKAN
 	ncnn::create_gpu_instance();	
@@ -20,7 +19,6 @@ InsightfaceLandmarker::InsightfaceLandmarker() {
 }
 
 InsightfaceLandmarker::~InsightfaceLandmarker() {
-	insightface_landmarker_net_->clear();
 #if MIRROR_VULKAN
 	ncnn::destroy_gpu_instance();
 #endif // MIRROR_VULKAN	
@@ -29,8 +27,8 @@ InsightfaceLandmarker::~InsightfaceLandmarker() {
 int InsightfaceLandmarker::LoadModel(const char * root_path) {
 	std::string fl_param = std::string(root_path) + "/2d106.param";
 	std::string fl_bin = std::string(root_path) + "/2d106.bin";
-	if (insightface_landmarker_net_->load_param(fl_param.c_str()) == -1 ||
-		insightface_landmarker_net_->load_model(fl_bin.c_str()) == -1) {
+	if (insightface_landmarker_net_.load_param(fl_param.c_str()) == -1 ||
+		insightface_landmarker_net_.load_model(fl_bin.c_str()) == -1) {
 		std::cout << "load face landmark model failed." << std::endl;
 		return 10000;
 	}
@@ -65,7 +63,7 @@ int InsightfaceLandmarker::ExtractKeypoints(const cv::Mat & img_src,
 	cv::Mat img_face = img_src(face_enlarged).clone();
 
 	// 4 do inference
-	ncnn::Extractor ex = insightface_landmarker_net_->create_extractor();
+	ncnn::Extractor ex = insightface_landmarker_net_.create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face.data,
 		ncnn::Mat::PIXEL_BGR2RGB, img_face.cols, img_face.rows, 192, 192);
 	ex.input("data", in);

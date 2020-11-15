@@ -14,7 +14,7 @@ public:
 	int DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces);
 
 private:
-	ncnn::Net* retina_net_;
+	ncnn::Net retina_net_;
 	std::vector<ANCHORS> anchors_generated_;
 	bool initialized_;
 	const int RPNs_[3] = { 32, 16, 8 };

@@ -15,7 +15,7 @@ public:
 		const cv::Rect& face, std::vector<cv::Point2f>* keypoints);
 
 private:
-	ncnn::Net* insightface_landmarker_net_;
+	ncnn::Net insightface_landmarker_net_;
 	bool initialized;
 };
 

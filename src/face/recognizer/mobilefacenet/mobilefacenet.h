@@ -16,7 +16,7 @@ public:
 	int ExtractFeature(const cv::Mat& img_face, std::vector<float>* feature);
 
 private:
-	ncnn::Net* mobileface_net_;
+	ncnn::Net mobileface_net_;
 	bool initialized_;
 };
 
