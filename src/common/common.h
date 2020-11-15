@@ -59,11 +59,11 @@ int ComputeIOU(const cv::Rect & rect1,
 	const std::string& type = "UNION");
 
 template <typename T>
-int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
+std::vector<T> NMS(const std::vector<T>& inputs,
 	const float& threshold, const std::string& type = "UNION") {
-	result->clear();
+    std::vector<T> result;
     if (inputs.size() == 0)
-        return -1;
+        return {};
     
     std::vector<T> inputs_tmp;
     inputs_tmp.assign(inputs.begin(), inputs.end());
@@ -80,7 +80,7 @@ int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
 
     while (indexes.size() > 0) {
         int good_idx = indexes[0];
-        result->push_back(inputs_tmp[good_idx]);
+        result.push_back(inputs_tmp[good_idx]);
         std::vector<int> tmp_indexes = indexes;
         indexes.clear();
         for (int i = 1; i < tmp_indexes.size(); i++) {
@@ -92,7 +92,7 @@ int const NMS(const std::vector<T>& inputs, std::vector<T>* result,
             }
         }
     }
-    return 0;
+    return result;
 }
 
 float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<float>& feature2);

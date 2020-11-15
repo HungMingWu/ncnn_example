@@ -85,7 +85,7 @@ int MobilenetSSD::DetectObject(const cv::Mat & img_src,
 		}
 		objects_tmp.push_back(object);
 	}
-	NMS(objects_tmp, objects, nmsThreshold_);
+	*objects = NMS(objects_tmp, nmsThreshold_);
 	std::cout << "objects number: " << objects->size() << std::endl;
 	std::cout << "end object detect." << std::endl;
 	return 0;

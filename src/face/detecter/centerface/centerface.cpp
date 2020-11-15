@@ -104,7 +104,7 @@ int CenterFace::DetectFace(const cv::Mat& img_src,
             faces_tmp.push_back(face_info);
 		}
 	}
-    NMS(faces_tmp, faces, nmsThreshold_);
+    *faces = NMS(faces_tmp, nmsThreshold_);
     std::cout << "end detect." << std::endl;
     return 0;
 }

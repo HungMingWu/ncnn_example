@@ -87,19 +87,17 @@ int Mtcnn::DetectFace(const cv::Mat & img_src,
 	img_in.substract_mean_normalize(meanVals, normVals);
 	
 	std::vector<FaceInfo> first_bboxes, second_bboxes;
-	std::vector<FaceInfo> first_bboxes_result;
 	PDetect(img_in, &first_bboxes);
-	NMS(first_bboxes, &first_bboxes_result, nms_threshold_[0]);
+	std::vector<FaceInfo> first_bboxes_result = NMS(first_bboxes, nms_threshold_[0]);
 	Refine(&first_bboxes_result, max_size);
 
 	RDetect(img_in, first_bboxes_result, &second_bboxes);
-	std::vector<FaceInfo> second_bboxes_result;
-	NMS(second_bboxes, &second_bboxes_result, nms_threshold_[1]);
+	std::vector<FaceInfo> second_bboxes_result = NMS(second_bboxes, nms_threshold_[1]);
 	Refine(&second_bboxes_result, max_size);
 
 	std::vector<FaceInfo> third_bboxes;
 	ODetect(img_in, second_bboxes_result, &third_bboxes);
-	NMS(third_bboxes, faces, nms_threshold_[2], "MIN");
+	*faces = NMS(third_bboxes, nms_threshold_[2], "MIN");
 	Refine(faces, max_size);
 	return 0;
 }

@@ -134,7 +134,7 @@ int AntiConv::DetectFace(const cv::Mat & img_src,
 		}
 	}
 	
-	NMS(faces_tmp, faces, iouThreshold_);
+	*faces = NMS(faces_tmp, iouThreshold_);
 	std::cout << faces->size() << " faces detected." << std::endl;
 
 	std::cout << "end face detect." << std::endl;
