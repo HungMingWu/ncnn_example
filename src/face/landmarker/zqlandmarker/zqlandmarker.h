@@ -11,8 +11,8 @@ public:
 	~ZQLandmarker();
 
 	int LoadModel(const char* root_path);
-	int ExtractKeypoints(const cv::Mat& img_src,
-		const cv::Rect& face, std::vector<cv::Point2f>* keypoints);
+	std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
+		const cv::Rect& face);
 
 private:
 	ncnn::Net* zq_landmarker_net_;

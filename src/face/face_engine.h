@@ -21,8 +21,8 @@ public:
 	FACE_API int DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces);
 	FACE_API int Track(const std::vector<FaceInfo>& curr_faces,
 		std::vector<TrackedFaceInfo>* faces);
-	FACE_API int ExtractKeypoints(const cv::Mat& img_src,
-		const cv::Rect& face, std::vector<cv::Point2f>* keypoints);
+	FACE_API std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
+		const cv::Rect& face);
 	FACE_API int ExtractFeature(const cv::Mat& img_face, std::vector<float>* feature);
 	FACE_API int AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat* face_aligned);
 

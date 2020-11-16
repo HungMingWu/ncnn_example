@@ -36,20 +36,12 @@ int InsightfaceLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-int InsightfaceLandmarker::ExtractKeypoints(const cv::Mat & img_src,
-	const cv::Rect & face, std::vector<cv::Point2f>* keypoints) {
+std::vector<cv::Point2f> InsightfaceLandmarker::ExtractKeypoints(const cv::Mat & img_src,
+	const cv::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
-	keypoints->clear();
-	if (!initialized) {
-		std::cout << "insightface landmarker unitialized." << std::endl;
-		return 10000;
-	}
-
-	if (img_src.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
-
+	assert(initialized);
+	assert(!img_src.empty());
+	std::vector<cv::Point2f> keypoints;
 	// 1 enlarge the face rect
 	cv::Rect face_enlarged = face;
 	const float enlarge_scale = 1.5f;
@@ -73,11 +65,11 @@ int InsightfaceLandmarker::ExtractKeypoints(const cv::Mat & img_src,
 	for (int i = 0; i < 106; ++i) {
 		float x = (out[2 * i] + 1.0f) * img_face.cols / 2 + face_enlarged.x;
 		float y = (out[2 * i + 1] + 1.0f) * img_face.rows / 2 + face_enlarged.y;
-		keypoints->push_back(cv::Point2f(x, y));
+		keypoints.push_back(cv::Point2f(x, y));
 	}
 
 	std::cout << "end extract keypoints." << std::endl;
-	return 0;
+	return keypoints;
 }
 
 }

@@ -15,17 +15,21 @@
 #include "anticonv/anticonv.h"
 #include "centerface/centerface.h"
 
+// Use for landmarker
+#include "zqlandmarker/zqlandmarker.h"
+#include "insightface/insightface.h"
+
 namespace mirror {
 class FaceEngine::Impl {
     using FaceType = CenterFace;
+    using LandmarkType = InsightfaceLandmarker;
 public:
     Impl() {
         // detecter_factory_ = new AnticonvFactory();
-        landmarker_factory_ = new InsightfaceLandmarkerFactory();
         recognizer_factory_ = new MobilefacenetRecognizerFactory();
         
         detecter_.reset(new FaceType());
-        landmarker_ = landmarker_factory_->CreateLandmarker();
+        landmarker_.reset(new LandmarkType());
         recognizer_ = recognizer_factory_->CreateRecognizer();
 
 		tracker_ = new Tracker();
@@ -40,11 +44,6 @@ public:
 			tracker_ = nullptr;
 		}
 
-        if (landmarker_) {
-            delete landmarker_;
-            landmarker_ = nullptr;
-        }
-
         if (recognizer_) {
             delete recognizer_;
             recognizer_ = nullptr;
@@ -53,11 +52,6 @@ public:
         if (database_) {
             delete database_;
             database_ = nullptr;
-        }
-
-        if (landmarker_factory_) {
-            delete landmarker_factory_;
-            landmarker_factory_ = nullptr;
         }
 
         if (recognizer_factory_) {
@@ -93,9 +87,9 @@ public:
     inline int DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces) {
         return detecter_->DetectFace(img_src, faces);
     }
-    inline int ExtractKeypoints(const cv::Mat& img_src,
-		const cv::Rect& face, std::vector<cv::Point2f>* keypoints) {
-        return landmarker_->ExtractKeypoints(img_src, face, keypoints);
+    inline std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
+		const cv::Rect& face) {
+        return landmarker_->ExtractKeypoints(img_src, face);
     }
     inline int AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat * face_aligned) {
         return aligner_->AlignFace(img_src, keypoints, face_aligned);
@@ -121,7 +115,6 @@ public:
     }
 
 private:
-    LandmarkerFactory* landmarker_factory_ = nullptr;
     RecognizerFactory* recognizer_factory_ = nullptr;
 
 private:
@@ -130,7 +123,7 @@ private:
     Aligner* aligner_ = nullptr;
     std::unique_ptr<Detecter> detecter_;
 	Tracker* tracker_ = nullptr;
-    Landmarker* landmarker_ = nullptr;
+    std::unique_ptr<Landmarker> landmarker_;
     Recognizer* recognizer_ = nullptr;
     FaceDatabase* database_ = nullptr;
 };
@@ -159,9 +152,9 @@ int FaceEngine::DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces)
     return impl_->DetectFace(img_src, faces);
 }
 
-int FaceEngine::ExtractKeypoints(const cv::Mat& img_src,
-	const cv::Rect& face, std::vector<cv::Point2f>* keypoints) {
-    return impl_->ExtractKeypoints(img_src, face, keypoints);
+std::vector<cv::Point2f> FaceEngine::ExtractKeypoints(const cv::Mat& img_src,
+	const cv::Rect& face) {
+    return impl_->ExtractKeypoints(img_src, face);
 }
 
 int FaceEngine::AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat* face_aligned) {

@@ -35,20 +35,12 @@ int ZQLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-int ZQLandmarker::ExtractKeypoints(const cv::Mat & img_src,
-	const cv::Rect & face, std::vector<cv::Point2f>* keypoints) {
+std::vector<cv::Point2f> ZQLandmarker::ExtractKeypoints(const cv::Mat & img_src,
+	const cv::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
-	keypoints->clear();
-	if (!initialized) {
-		std::cout << "zq landmarker unitialized." << std::endl;
-		return 10000;
-	}
-
-	if (img_src.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
-
+	assert(initialized);
+	assert(!img_src.empty());
+	std::vector<cv::Point2f> keypoints;
 	cv::Mat img_face = img_src(face).clone();
 	ncnn::Extractor ex = zq_landmarker_net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face.data,
@@ -61,12 +53,12 @@ int ZQLandmarker::ExtractKeypoints(const cv::Mat & img_src,
 	for (int i = 0; i < 106; ++i) {
 		float x = abs(out[2 * i] * img_face.cols) + face.x;
 		float y = abs(out[2 * i + 1] * img_face.rows) + face.y;
-		keypoints->push_back(cv::Point2f(x, y));
+		keypoints.push_back(cv::Point2f(x, y));
 	}
 
 
 	std::cout << "end extract keypoints." << std::endl;
-	return 0;
+	return keypoints;
 }
 
 }
