@@ -5,7 +5,7 @@
 #include "ncnn/net.h"
 
 namespace mirror {
-using ANCHORS = std::vector<cv::Rect>;
+using ANCHORS = std::vector<mirror::Rect>;
 class AntiConv : public Detecter {
 public:
 	AntiConv();

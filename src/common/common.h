@@ -9,9 +9,24 @@
 #endif
 
 namespace mirror {
+
 #define kFaceFeatureDim 128
 #define kFaceNameDim 256
 const int threads_num = 2;
+
+template<typename _Tp>
+struct Rect_
+{
+    Rect_() : x(0), y(0), width(0), height(0) {}
+    Rect_(_Tp _x, _Tp _y, _Tp _w, _Tp _h) : x(_x), y(_y), width(_w), height(_h) {}
+
+    _Tp x;
+    _Tp y;
+    _Tp width;
+    _Tp height;
+};
+
+using Rect = Rect_<int>;
 
 struct ImageInfo {
     std::string label_;
@@ -41,13 +56,13 @@ struct QueryResult {
     float sim_;
 };
 
-std::vector<cv::Rect> RatioAnchors(const cv::Rect & anchor,
+std::vector<mirror::Rect> RatioAnchors(const mirror::Rect & anchor,
 	const std::vector<float>& ratios);
 
-std::vector<cv::Rect> ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
+std::vector<mirror::Rect> ScaleAnchors(const std::vector<mirror::Rect>& ratio_anchors,
 	const std::vector<float>& scales);
 
-std::vector<cv::Rect> GenerateAnchors(const int & base_size,
+std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 	const std::vector<float>& ratios, const std::vector<float> scales);
 
 float InterRectArea(const cv::Rect & a,
@@ -101,4 +116,5 @@ void RectifyRect(cv::Rect* rect);
 }
 
 #endif // !_COMMON_H_
+
 

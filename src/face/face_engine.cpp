@@ -23,7 +23,7 @@
 
 namespace mirror {
 class FaceEngine::Impl {
-    using FaceType = RetinaFace;
+    using FaceType = AntiConv;
     using LandmarkType = ZQLandmarker;
 public:
     Impl() {

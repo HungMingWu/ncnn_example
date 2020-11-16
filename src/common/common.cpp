@@ -3,9 +3,9 @@
 #include <iostream>
 
 namespace mirror {
-std::vector<cv::Rect> RatioAnchors(const cv::Rect & anchor,
+std::vector<mirror::Rect> RatioAnchors(const mirror::Rect & anchor,
 	const std::vector<float>& ratios) {
-	std::vector<cv::Rect> anchors;
+	std::vector<mirror::Rect> anchors;
 	cv::Point center = cv::Point(anchor.x + (anchor.width - 1) * 0.5f,
 		anchor.y + (anchor.height - 1) * 0.5f);
 	float anchor_size = anchor.width * anchor.height;
@@ -20,21 +20,20 @@ std::vector<cv::Rect> RatioAnchors(const cv::Rect & anchor,
 		float curr_x = center.x - (curr_anchor_width - 1)* 0.5f;
 		float curr_y = center.y - (curr_anchor_height - 1)* 0.5f;
 
-		cv::Rect curr_anchor = cv::Rect(curr_x, curr_y,
-			curr_anchor_width - 1, curr_anchor_height - 1);
-		anchors.push_back(curr_anchor);
+		anchors.emplace_back(curr_x, curr_y,
+                        curr_anchor_width - 1, curr_anchor_height - 1);
+
 	}
 	return anchors;
 }
 
-std::vector<cv::Rect> ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
+std::vector<mirror::Rect> ScaleAnchors(const std::vector<mirror::Rect>& ratio_anchors,
 	const std::vector<float>& scales) {
-	std::vector<cv::Rect> anchors;
+	std::vector<mirror::Rect> anchors;
 #if defined(_OPENMP)
 #pragma omp parallel for num_threads(threads_num)
 #endif
-	for (int i = 0; i < static_cast<int>(ratio_anchors.size()); ++i) {
-		cv::Rect anchor = ratio_anchors.at(i);
+	for (const auto &anchor : ratio_anchors) {
 		cv::Point2f center = cv::Point2f(anchor.x + anchor.width * 0.5f,
 			anchor.y + anchor.height * 0.5f);
 		for (int j = 0; j < static_cast<int>(scales.size()); ++j) {
@@ -43,20 +42,20 @@ std::vector<cv::Rect> ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
 			float curr_height = scale * (anchor.height + 1);
 			float curr_x = center.x - curr_width * 0.5f;
 			float curr_y = center.y - curr_height * 0.5f;
-			cv::Rect curr_anchor = cv::Rect(curr_x, curr_y,
-				curr_width, curr_height);
-			anchors.push_back(curr_anchor);
+			anchors.emplace_back(curr_x, curr_y,
+                                curr_width, curr_height);
+
 		}
 	}
 
 	return anchors;
 }
 
-std::vector<cv::Rect> GenerateAnchors(const int & base_size,
+std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 	const std::vector<float>& ratios, 
 	const std::vector<float> scales) {
-	cv::Rect anchor = cv::Rect(0, 0, base_size, base_size);
-	std::vector<cv::Rect> ratio_anchors = RatioAnchors(anchor, ratios);
+	mirror::Rect anchor(0, 0, base_size, base_size);
+	std::vector<mirror::Rect> ratio_anchors = RatioAnchors(anchor, ratios);
 	return ScaleAnchors(ratio_anchors, scales);
 }
 
