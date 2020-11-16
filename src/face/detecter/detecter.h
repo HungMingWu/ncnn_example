@@ -14,43 +14,6 @@ public:
 
 };
 
-// 工厂基类
-class DetecterFactory {
-public:
-	virtual Detecter* CreateDetecter() = 0;
-	virtual ~DetecterFactory() {};
-};
-
-// 不同人脸检测器
-class CenterfaceFactory : public DetecterFactory {
-public:
-	CenterfaceFactory() {}
-	~CenterfaceFactory() {}
-	Detecter* CreateDetecter();
-};
-
-class MtcnnFactory : public DetecterFactory {
-public:
-	MtcnnFactory() {}
-	~MtcnnFactory() {}
-	Detecter* CreateDetecter();
-
-};
-
-class RetinafaceFactory : public DetecterFactory {
-public:
-	RetinafaceFactory() {}
-	~RetinafaceFactory() {}
-	Detecter* CreateDetecter();
-};
-
-class AnticonvFactory : public DetecterFactory {
-public:
-	AnticonvFactory() {}
-	~AnticonvFactory() {}
-	Detecter* CreateDetecter();
-};
-
 }
 
 #endif // !_FACE_DETECTER_H_

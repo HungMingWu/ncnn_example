@@ -1,5 +1,6 @@
 #include "face_engine.h"
 #include <iostream>
+#include <memory>
 
 #include "detecter/detecter.h"
 #include "tracker/tracker.h"
@@ -8,17 +9,22 @@
 #include "recognizer/recognizer.h"
 #include "database/face_database.h"
 
+// Use for detecter_
+#include "retinaface/retinaface.h"
+#include "mtcnn/mtcnn.h"
+#include "anticonv/anticonv.h"
+#include "centerface/centerface.h"
 
 namespace mirror {
 class FaceEngine::Impl {
+    using FaceType = CenterFace;
 public:
     Impl() {
         // detecter_factory_ = new AnticonvFactory();
-        detecter_factory_ = new RetinafaceFactory();
         landmarker_factory_ = new InsightfaceLandmarkerFactory();
         recognizer_factory_ = new MobilefacenetRecognizerFactory();
         
-        detecter_ = detecter_factory_->CreateDetecter();
+        detecter_.reset(new FaceType());
         landmarker_ = landmarker_factory_->CreateLandmarker();
         recognizer_ = recognizer_factory_->CreateRecognizer();
 
@@ -29,11 +35,6 @@ public:
     }
 
     ~Impl() {
-        if (detecter_) {
-            delete detecter_;
-            detecter_ = nullptr;
-        }
-
 		if (tracker_) {
 			delete tracker_;
 			tracker_ = nullptr;
@@ -52,11 +53,6 @@ public:
         if (database_) {
             delete database_;
             database_ = nullptr;
-        }
-
-        if (detecter_factory_) {
-            delete detecter_factory_;
-            detecter_factory_ = nullptr;
         }
 
         if (landmarker_factory_) {
@@ -125,7 +121,6 @@ public:
     }
 
 private:
-    DetecterFactory* detecter_factory_ = nullptr;
     LandmarkerFactory* landmarker_factory_ = nullptr;
     RecognizerFactory* recognizer_factory_ = nullptr;
 
@@ -133,7 +128,7 @@ private:
     bool initialized_;
     std::string db_name_;
     Aligner* aligner_ = nullptr;
-    Detecter* detecter_ = nullptr;
+    std::unique_ptr<Detecter> detecter_;
 	Tracker* tracker_ = nullptr;
     Landmarker* landmarker_ = nullptr;
     Recognizer* recognizer_ = nullptr;
