@@ -36,17 +36,15 @@ int AntiConv::LoadModel(const char * root_path) {
 
 	// generate anchors
 	for (int i = 0; i < 3; ++i) {
-		ANCHORS anchors;
 		if (0 == i) {
-			GenerateAnchors(16, { 1.0f }, { 32, 16 }, &anchors);
+			anchors_generated_.push_back(GenerateAnchors(16, { 1.0f }, { 32, 16 }));
 		}
 		else if (1 == i) {
-			GenerateAnchors(16, { 1.0f }, { 8, 4 }, &anchors);
+			anchors_generated_.push_back(GenerateAnchors(16, { 1.0f }, { 8, 4 }));
 		}
 		else {
-			GenerateAnchors(16, { 1.0f }, { 2, 1 }, &anchors);
+			anchors_generated_.push_back(GenerateAnchors(16, { 1.0f }, { 2, 1 }));
 		}
-		anchors_generated_.push_back(anchors);
 	}
 	initialized_ = true;
 

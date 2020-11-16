@@ -41,15 +41,14 @@ struct QueryResult {
     float sim_;
 };
 
-int RatioAnchors(const cv::Rect & anchor,
-	const std::vector<float>& ratios, std::vector<cv::Rect>* anchors);
+std::vector<cv::Rect> RatioAnchors(const cv::Rect & anchor,
+	const std::vector<float>& ratios);
 
-int ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
-	const std::vector<float>& scales, std::vector<cv::Rect>* anchors);
+std::vector<cv::Rect> ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
+	const std::vector<float>& scales);
 
-int GenerateAnchors(const int & base_size,
-	const std::vector<float>& ratios, const std::vector<float> scales,
-	std::vector<cv::Rect>* anchors);
+std::vector<cv::Rect> GenerateAnchors(const int & base_size,
+	const std::vector<float>& ratios, const std::vector<float> scales);
 
 float InterRectArea(const cv::Rect & a,
 	const cv::Rect & b);

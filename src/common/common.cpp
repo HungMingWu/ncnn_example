@@ -3,10 +3,9 @@
 #include <iostream>
 
 namespace mirror {
-int RatioAnchors(const cv::Rect & anchor,
-	const std::vector<float>& ratios, 
-	std::vector<cv::Rect>* anchors) {
-	anchors->clear();
+std::vector<cv::Rect> RatioAnchors(const cv::Rect & anchor,
+	const std::vector<float>& ratios) {
+	std::vector<cv::Rect> anchors;
 	cv::Point center = cv::Point(anchor.x + (anchor.width - 1) * 0.5f,
 		anchor.y + (anchor.height - 1) * 0.5f);
 	float anchor_size = anchor.width * anchor.height;
@@ -23,14 +22,14 @@ int RatioAnchors(const cv::Rect & anchor,
 
 		cv::Rect curr_anchor = cv::Rect(curr_x, curr_y,
 			curr_anchor_width - 1, curr_anchor_height - 1);
-		anchors->push_back(curr_anchor);
+		anchors.push_back(curr_anchor);
 	}
-	return 0;
+	return anchors;
 }
 
-int ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
-	const std::vector<float>& scales, std::vector<cv::Rect>* anchors) {
-	anchors->clear();
+std::vector<cv::Rect> ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
+	const std::vector<float>& scales) {
+	std::vector<cv::Rect> anchors;
 #if defined(_OPENMP)
 #pragma omp parallel for num_threads(threads_num)
 #endif
@@ -46,24 +45,19 @@ int ScaleAnchors(const std::vector<cv::Rect>& ratio_anchors,
 			float curr_y = center.y - curr_height * 0.5f;
 			cv::Rect curr_anchor = cv::Rect(curr_x, curr_y,
 				curr_width, curr_height);
-			anchors->push_back(curr_anchor);
+			anchors.push_back(curr_anchor);
 		}
 	}
 
-	return 0;
+	return anchors;
 }
 
-int GenerateAnchors(const int & base_size,
+std::vector<cv::Rect> GenerateAnchors(const int & base_size,
 	const std::vector<float>& ratios, 
-	const std::vector<float> scales,
-	std::vector<cv::Rect>* anchors) {
-	anchors->clear();
+	const std::vector<float> scales) {
 	cv::Rect anchor = cv::Rect(0, 0, base_size, base_size);
-	std::vector<cv::Rect> ratio_anchors;
-	RatioAnchors(anchor, ratios, &ratio_anchors);
-	ScaleAnchors(ratio_anchors, scales, anchors);
-	
-	return 0;
+	std::vector<cv::Rect> ratio_anchors = RatioAnchors(anchor, ratios);
+	return ScaleAnchors(ratio_anchors, scales);
 }
 
 float InterRectArea(const cv::Rect & a, const cv::Rect & b) {
