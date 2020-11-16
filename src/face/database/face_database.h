@@ -5,7 +5,6 @@
 #include <memory>
 #include <vector>
 
-#include "opencv2/core.hpp"
 #include "./stream/file_stream.h"
 #include "../../common/common.h"
 

@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "../common/common.h"
-#include "opencv2/core.hpp"
 
 namespace mirror {
 class Tracker {

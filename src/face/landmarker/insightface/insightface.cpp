@@ -2,8 +2,6 @@
 #include <iostream>
 #include <string>
 #include "../../common/common.h"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
 
 #if MIRROR_VULKAN
 #include "gpu.h"
