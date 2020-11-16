@@ -74,7 +74,6 @@ std::vector<FaceInfo> Mtcnn::DetectFace(const cv::Mat & img_src) {
 	assert(!img_src.empty());
 	assert(initialized_);
 	cv::Size max_size = cv::Size(img_src.cols, img_src.rows);
-	cv::Mat img_cpy = img_src.clone();
 	ncnn::Mat img_in = ncnn::Mat::from_pixels(img_src.data,
 		ncnn::Mat::PIXEL_BGR2RGB, img_src.cols, img_src.rows);
 	img_in.substract_mean_normalize(meanVals, normVals);

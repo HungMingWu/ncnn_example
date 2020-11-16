@@ -51,13 +51,12 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const cv::Mat & img_src) {
 	std::cout << "start face detect." << std::endl;
 	assert(initialized_);
 	assert(!img_src.empty());
-	cv::Mat img_cpy = img_src.clone();
-	int img_width = img_cpy.cols;
-	int img_height = img_cpy.rows;
+	int img_width = img_src.cols;
+	int img_height = img_src.rows;
 	float factor_x = static_cast<float>(img_width) / inputSize_.width;
 	float factor_y = static_cast<float>(img_height) / inputSize_.height;
 	ncnn::Extractor ex = retina_net_.create_extractor();
-	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_cpy.data,
+	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_src.data,
 		ncnn::Mat::PIXEL_BGR2RGB, img_width, img_height, inputSize_.width, inputSize_.height);
 	ex.input("data", in);
 	

@@ -30,9 +30,6 @@ std::vector<mirror::Rect> RatioAnchors(const mirror::Rect & anchor,
 std::vector<mirror::Rect> ScaleAnchors(const std::vector<mirror::Rect>& ratio_anchors,
 	const std::vector<float>& scales) {
 	std::vector<mirror::Rect> anchors;
-#if defined(_OPENMP)
-#pragma omp parallel for num_threads(threads_num)
-#endif
 	for (const auto &anchor : ratio_anchors) {
 		mirror::Point2f center(anchor.x + anchor.width * 0.5f,
 			anchor.y + anchor.height * 0.5f);

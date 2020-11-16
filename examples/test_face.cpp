@@ -116,8 +116,7 @@ int TestDetecter(int argc, char* argv[]) {
 	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
 	std::cout << "time cost: " << time_cost << "ms" << std::endl;
 
-	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
-		FaceInfo face_info = faces.at(i);
+	for (const auto &face_info : faces) {
 		cv::rectangle(img_src, face_info.location_, cv::Scalar(0, 255, 0), 2);
 #if 1
 		for (int num = 0; num < 5; ++num) {
