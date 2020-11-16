@@ -21,8 +21,8 @@
 
 namespace mirror {
 class FaceEngine::Impl {
-    using FaceType = CenterFace;
-    using LandmarkType = InsightfaceLandmarker;
+    using FaceType = RetinaFace;
+    using LandmarkType = ZQLandmarker;
 public:
     Impl() {
         // detecter_factory_ = new AnticonvFactory();
@@ -84,8 +84,8 @@ public:
 	inline int Track(const std::vector<FaceInfo>& curr_faces, std::vector<TrackedFaceInfo>* faces) {
 		return tracker_->Track(curr_faces, faces);
 	}
-    inline int DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces) {
-        return detecter_->DetectFace(img_src, faces);
+    inline std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) {
+        return detecter_->DetectFace(img_src);
     }
     inline std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
 		const cv::Rect& face) {
@@ -148,8 +148,8 @@ int FaceEngine::Track(const std::vector<FaceInfo>& curr_faces,
 	return impl_->Track(curr_faces, faces);
 }
 
-int FaceEngine::DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces) {
-    return impl_->DetectFace(img_src, faces);
+std::vector<FaceInfo> FaceEngine::DetectFace(const cv::Mat& img_src) {
+    return impl_->DetectFace(img_src);
 }
 
 std::vector<cv::Point2f> FaceEngine::ExtractKeypoints(const cv::Mat& img_src,

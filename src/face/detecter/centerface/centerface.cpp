@@ -40,18 +40,10 @@ int CenterFace::LoadModel(const char* root_path) {
     return 0;
 }
 
-int CenterFace::DetectFace(const cv::Mat& img_src,
-    std::vector<FaceInfo>* faces) {
+std::vector<FaceInfo> CenterFace::DetectFace(const cv::Mat& img_src) {
     std::cout << "start detect." << std::endl;
-    faces->clear();
-    if (!initialized_) {
-        std::cout << "model uninitialized." << std::endl;
-        return 10000;
-    }
-    if (img_src.empty()) {
-        std::cout << "input empty." << std::endl;
-        return 10001;
-    }
+    assert(initialized_);
+    assert(!img_src.empty());
     int img_width = img_src.cols;
 	int img_height = img_src.rows;
 
@@ -104,9 +96,7 @@ int CenterFace::DetectFace(const cv::Mat& img_src,
             faces_tmp.push_back(face_info);
 		}
 	}
-    *faces = NMS(faces_tmp, nmsThreshold_);
-    std::cout << "end detect." << std::endl;
-    return 0;
+    return NMS(faces_tmp, nmsThreshold_);
 }
 
 }

@@ -18,7 +18,7 @@ public:
 	FACE_API FaceEngine();
 	FACE_API ~FaceEngine();
 	FACE_API int LoadModel(const char* root_path);
-	FACE_API int DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces);
+	FACE_API std::vector<FaceInfo> DetectFace(const cv::Mat& img_src);
 	FACE_API int Track(const std::vector<FaceInfo>& curr_faces,
 		std::vector<TrackedFaceInfo>* faces);
 	FACE_API std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,

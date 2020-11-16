@@ -49,18 +49,10 @@ int RetinaFace::LoadModel(const char * root_path) {
 	return 0;
 }
 
-int RetinaFace::DetectFace(const cv::Mat & img_src,
-	std::vector<FaceInfo>* faces) {
+std::vector<FaceInfo> RetinaFace::DetectFace(const cv::Mat & img_src) {
 	std::cout << "start face detect." << std::endl;
-	faces->clear();
-	if (!initialized_) {
-		std::cout << "retinaface detector model uninitialized." << std::endl;
-		return 10000;
-	}
-	if (img_src.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
+	assert(initialized_);
+	assert(!img_src.empty());
 	cv::Mat img_cpy = img_src.clone();
 	int img_width = img_cpy.cols;
 	int img_height = img_cpy.rows;
@@ -145,11 +137,11 @@ int RetinaFace::DetectFace(const cv::Mat & img_src,
 		}
 	}
 	
-	*faces = NMS(faces_tmp, iouThreshold_);
-	std::cout << faces->size() << " faces detected." << std::endl;
+	std::vector<FaceInfo> faces = NMS(faces_tmp, iouThreshold_);
+	std::cout << faces.size() << " faces detected." << std::endl;
 
 	std::cout << "end face detect." << std::endl;
-	return 0;
+	return faces;
 }
 
 }

@@ -12,7 +12,7 @@ public:
     CenterFace();
     ~CenterFace();
 	int LoadModel(const char* root_path);
-	int DetectFace(const cv::Mat& img_src, std::vector<FaceInfo>* faces);
+    std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) override;
 
 private:
     ncnn::Net* centernet_ = nullptr;

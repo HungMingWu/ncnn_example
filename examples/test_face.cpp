@@ -13,12 +13,10 @@ int TestLandmark(int argc, char* argv[]) {
 	
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces;
-	face_engine->DetectFace(img_src, &faces);
+	std::vector<FaceInfo> faces = face_engine->DetectFace(img_src);
 	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
 		cv::Rect face = faces.at(i).location_;
-		std::vector<cv::Point2f> keypoints;
-		face_engine->ExtractKeypoints(img_src, face, &keypoints);
+		std::vector<cv::Point2f> keypoints = face_engine->ExtractKeypoints(img_src, face);
 		for (int j = 0; j < static_cast<int>(keypoints.size()); ++j) {
 			cv::circle(img_src, keypoints[j], 1, cv::Scalar(0, 0, 255), 1);
 		}
@@ -47,8 +45,7 @@ int TestRecognize(int argc, char* argv[]) {
 	double start = static_cast<double>(cv::getTickCount());
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces;
-	face_engine->DetectFace(img_src, &faces);
+	std::vector<FaceInfo> faces = face_engine->DetectFace(img_src);
 
 	cv::Mat face1 = img_src(faces[0].location_).clone();
 	cv::Mat face2 = img_src(faces[1].location_).clone();
@@ -85,12 +82,10 @@ int TestAlignFace(int argc, char* argv[]) {
 	
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces;
-	face_engine->DetectFace(img_src, &faces);
+	std::vector<FaceInfo> faces = face_engine->DetectFace(img_src);
 	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
 		cv::Rect face = faces.at(i).location_;
-		std::vector<cv::Point2f> keypoints;
-		face_engine->ExtractKeypoints(img_src, face, &keypoints);
+		std::vector<cv::Point2f> keypoints = face_engine->ExtractKeypoints(img_src, face);
 		cv::Mat face_aligned;
 		face_engine->AlignFace(img_src, keypoints, &face_aligned);
 		std::string name = std::to_string(i) + ".jpg";
@@ -116,9 +111,8 @@ int TestDetecter(int argc, char* argv[]) {
 
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces;
 	double start = static_cast<double>(cv::getTickCount());
-	face_engine->DetectFace(img_src, &faces);
+	std::vector<FaceInfo> faces = face_engine->DetectFace(img_src);
 	double end = static_cast<double>(cv::getTickCount());
 	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
 	std::cout << "time cost: " << time_cost << "ms" << std::endl;
@@ -163,8 +157,7 @@ int TestTrack(int argc, char* argv[]) {
 		if (frame.empty()) {
 			continue;
 		}
-		std::vector<FaceInfo> curr_faces;
-		face_engine->DetectFace(frame, &curr_faces);
+		std::vector<FaceInfo> curr_faces = face_engine->DetectFace(frame);
 		std::vector<TrackedFaceInfo> faces;
 		face_engine->Track(curr_faces, &faces);
 
@@ -197,8 +190,7 @@ int TestDatabase(int argc, char* argv[]) {
     FaceEngine* face_engine = new FaceEngine();
     face_engine->LoadModel(root_path);
     face_engine->Load();
-    std::vector<FaceInfo> faces;
-    face_engine->DetectFace(img_src, &faces);
+    std::vector<FaceInfo> faces = face_engine->DetectFace(img_src);
 
     int faces_num = static_cast<int>(faces.size());
     std::cout << "faces number: " << faces_num << std::endl;
@@ -236,9 +228,8 @@ int TestMask(int argc, char* argv[]) {
 
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces;
 	double start = static_cast<double>(cv::getTickCount());
-	face_engine->DetectFace(img_src, &faces);
+	std::vector<FaceInfo> faces = face_engine->DetectFace(img_src);
 	double end = static_cast<double>(cv::getTickCount());
 	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
 	std::cout << "time cost: " << time_cost << "ms" << std::endl;
@@ -263,10 +254,10 @@ int TestMask(int argc, char* argv[]) {
 
 
 int main(int argc, char* argv[]) {
-	//return TestLandmark(argc, argv);
+	// return TestLandmark(argc, argv);
 	// return TestRecognize(argc, argv);
 	// return TestAlignFace(argc, argv);
-	 return TestDetecter(argc, argv);
+	return TestDetecter(argc, argv);
 	// return TestTrack(argc, argv);
 	// return TestDatabase(argc, argv);
 	// return TestMask(argc, argv);
