@@ -49,9 +49,8 @@ int TestRecognize(int argc, char* argv[]) {
 
 	cv::Mat face1 = img_src(faces[0].location_).clone();
 	cv::Mat face2 = img_src(faces[1].location_).clone();
-	std::vector<float> feature1, feature2;
-	face_engine->ExtractFeature(face1, &feature1);
-	face_engine->ExtractFeature(face2, &feature2);
+	std::vector<float> feature1 = face_engine->ExtractFeature(face1);
+	std::vector<float> feature2 = face_engine->ExtractFeature(face2);
 	float sim = CalculateSimilarity(feature1, feature2);
 
 	double end = static_cast<double>(cv::getTickCount());
@@ -158,8 +157,7 @@ int TestTrack(int argc, char* argv[]) {
 			continue;
 		}
 		std::vector<FaceInfo> curr_faces = face_engine->DetectFace(frame);
-		std::vector<TrackedFaceInfo> faces;
-		face_engine->Track(curr_faces, &faces);
+		std::vector<TrackedFaceInfo> faces = face_engine->Track(curr_faces);
 
 		for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
 			TrackedFaceInfo tracked_face_info = faces.at(i);
@@ -197,8 +195,7 @@ int TestDatabase(int argc, char* argv[]) {
     for (int i = 0; i < faces_num; ++i) {
         cv::Rect face = faces.at(i).location_;
 		cv::rectangle(img_src, face, cv::Scalar(0, 255, 0), 2);
-        std::vector<float> feat;
-        face_engine->ExtractFeature(img_src(face).clone(), &feat);
+        std::vector<float> feat = face_engine->ExtractFeature(img_src(face).clone());
 
 #if 1
         face_engine->Insert(feat, "face" + std::to_string(i));

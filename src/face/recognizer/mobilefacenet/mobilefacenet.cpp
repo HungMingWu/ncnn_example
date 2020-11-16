@@ -33,34 +33,25 @@ int Mobilefacenet::LoadModel(const char * root_path) {
 	return 0;
 }
 
-int Mobilefacenet::ExtractFeature(const cv::Mat & img_face,
-	std::vector<float>* feature) {
+std::vector<float> Mobilefacenet::ExtractFeature(const cv::Mat & img_face) {
 	std::cout << "start extract feature." << std::endl;
-	feature->clear();
-	if (!initialized_) {
-		std::cout << "mobilefacenet model uninitialized." << std::endl;
-		return 10000;
-	}
-	if (img_face.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
-
+	assert(initialized_);
+	assert(!img_face.empty());
 	cv::Mat face_cpy = img_face.clone();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(face_cpy.data,
 		ncnn::Mat::PIXEL_BGR2RGB, face_cpy.cols, face_cpy.rows, 112, 112);
-	feature->resize(kFaceFeatureDim);
 	ncnn::Extractor ex = mobileface_net_.create_extractor();
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("fc1", out);
+	std::vector<float> features(kFaceFeatureDim);
 	for (int i = 0; i < kFaceFeatureDim; ++i) {
-		feature->at(i) = out[i];
+		features[i] = out[i];
 	}
 
 	std::cout << "end extract feature." << std::endl;
 
-	return 0;
+	return features;
 }
 
 }

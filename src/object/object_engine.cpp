@@ -23,8 +23,8 @@ public:
 		return 0;
 	}
 
-	inline int DetectObject(const cv::Mat & img_src, std::vector<ObjectInfo>* objects) {
-		return object_detecter_->DetectObject(img_src, objects);
+	inline std::vector<ObjectInfo> DetectObject(const cv::Mat & img_src) {
+		return object_detecter_->DetectObject(img_src);
 	}
 
 private:
@@ -50,8 +50,8 @@ int ObjectEngine::LoadModel(const char * root_path) {
 	return impl_->LoadModel(root_path);
 }
 
-int ObjectEngine::DetectObject(const cv::Mat & img_src, std::vector<ObjectInfo>* objects) {
-	return impl_->DetectObject(img_src, objects);
+std::vector<ObjectInfo> ObjectEngine::DetectObject(const cv::Mat & img_src) {
+	return impl_->DetectObject(img_src);
 }
 
 }

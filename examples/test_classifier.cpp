@@ -10,8 +10,7 @@ int main(int argc, char* argv[]) {
 	mirror::ClassifierEngine* classifier_engine = new mirror::ClassifierEngine();
 
 	classifier_engine->LoadModel(root_path);
-	std::vector<mirror::ImageInfo> images;
-	classifier_engine->Classify(img_src, &images);
+	std::vector<mirror::ImageInfo> images = classifier_engine->Classify(img_src);
 
 	int topk = images.size();
 	for (int i = 0; i < topk; ++i) {

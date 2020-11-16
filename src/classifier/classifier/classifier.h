@@ -9,7 +9,7 @@ class Classifier {
 public:
 	virtual ~Classifier() {}
 	virtual int LoadModel(const char* root_path) = 0;
-	virtual int Classify(const cv::Mat& img_src, std::vector<ImageInfo>* images) = 0;
+	virtual std::vector<ImageInfo> Classify(const cv::Mat& img_src) = 0;
 };
 
 

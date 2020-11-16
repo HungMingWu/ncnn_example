@@ -44,18 +44,10 @@ int MobilenetSSD::LoadModel(const char * root_path) {
 	return 0;
 }
 
-int MobilenetSSD::DetectObject(const cv::Mat & img_src,
-	std::vector<ObjectInfo>* objects) {
+std::vector<ObjectInfo> MobilenetSSD::DetectObject(const cv::Mat & img_src) {
 	std::cout << "start object detect." << std::endl;
-	objects->clear();
-	if (!initialized_) {
-		std::cout << "ssd model unitialized." << std::endl;
-		return 10000;
-	}
-	if (img_src.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
+	assert(initialized_);
+	assert(!img_src.empty());
 	int width = img_src.cols;
 	int height = img_src.rows;
 
@@ -85,10 +77,10 @@ int MobilenetSSD::DetectObject(const cv::Mat & img_src,
 		}
 		objects_tmp.push_back(object);
 	}
-	*objects = NMS(objects_tmp, nmsThreshold_);
-	std::cout << "objects number: " << objects->size() << std::endl;
+	std::vector<ObjectInfo> objects = NMS(objects_tmp, nmsThreshold_);
+	std::cout << "objects number: " << objects.size() << std::endl;
 	std::cout << "end object detect." << std::endl;
-	return 0;
+	return objects;
 }
 
 }

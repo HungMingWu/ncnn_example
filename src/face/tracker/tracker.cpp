@@ -11,9 +11,8 @@ Tracker::~Tracker() {
 
 }
 
-int Tracker::Track(const std::vector<FaceInfo>& curr_faces, std::vector<TrackedFaceInfo>* faces) {
+std::vector<TrackedFaceInfo> Tracker::Track(const std::vector<FaceInfo>& curr_faces) {
     std::cout << "start track face." << std::endl;
-    faces->clear();
     int num_faces = static_cast<int>(curr_faces.size());
 
     std::deque<TrackedFaceInfo>scored_tracked_faces(pre_tracked_faces_.begin(), pre_tracked_faces_.end());
@@ -53,9 +52,8 @@ int Tracker::Track(const std::vector<FaceInfo>& curr_faces, std::vector<TrackedF
     }
 
     pre_tracked_faces_ = curr_tracked_faces;
-    *faces = curr_tracked_faces;
     std::cout << "end track face." << std::endl;
-	return 0;
+    return curr_tracked_faces;
 }
 
 }

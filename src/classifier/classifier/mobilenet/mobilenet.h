@@ -11,7 +11,7 @@ public:
 	Mobilenet();
 	~Mobilenet();
 	int LoadModel(const char* root_path);
-	int Classify(const cv::Mat& img_src, std::vector<ImageInfo>* images);
+	std::vector<ImageInfo> Classify(const cv::Mat& img_src);
 
 private:
 	bool initialized_;

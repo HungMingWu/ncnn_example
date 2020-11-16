@@ -16,7 +16,7 @@ public:
 		}
 	}
 	int LoadModel(const char* root_path);
-	int Classify(const cv::Mat& img_src, std::vector<ImageInfo>* images);
+	std::vector<ImageInfo> Classify(const cv::Mat& img_src);
 
 private:
 	Classifier* classifier_;
@@ -38,9 +38,8 @@ int ClassifierEngine::LoadModel(const char * root_path) {
 	return impl_->LoadModel(root_path);
 }
 
-int ClassifierEngine::Classify(const cv::Mat & img_src,
-	std::vector<ImageInfo>* images) {
-	return impl_->Classify(img_src, images);
+std::vector<ImageInfo> ClassifierEngine::Classify(const cv::Mat & img_src) {
+	return impl_->Classify(img_src);
 }
 
 
@@ -49,8 +48,8 @@ int ClassifierEngine::Impl::LoadModel(const char * root_path) {
 	return classifier_->LoadModel(root_path);
 }
 
-int ClassifierEngine::Impl::Classify(const cv::Mat & img_src, std::vector<ImageInfo>* images) {
-	return classifier_->Classify(img_src, images);
+std::vector<ImageInfo> ClassifierEngine::Impl::Classify(const cv::Mat & img_src) {
+	return classifier_->Classify(img_src);
 }
 
 }

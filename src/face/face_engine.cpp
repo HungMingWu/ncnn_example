@@ -19,6 +19,8 @@
 #include "zqlandmarker/zqlandmarker.h"
 #include "insightface/insightface.h"
 
+#include "mobilefacenet/mobilefacenet.h"
+
 namespace mirror {
 class FaceEngine::Impl {
     using FaceType = RetinaFace;
@@ -26,11 +28,10 @@ class FaceEngine::Impl {
 public:
     Impl() {
         // detecter_factory_ = new AnticonvFactory();
-        recognizer_factory_ = new MobilefacenetRecognizerFactory();
         
         detecter_.reset(new FaceType());
         landmarker_.reset(new LandmarkType());
-        recognizer_ = recognizer_factory_->CreateRecognizer();
+        recognizer_.reset(new Mobilefacenet());
 
 		tracker_ = new Tracker();
         aligner_ = new Aligner();
@@ -44,19 +45,9 @@ public:
 			tracker_ = nullptr;
 		}
 
-        if (recognizer_) {
-            delete recognizer_;
-            recognizer_ = nullptr;
-        }
-
         if (database_) {
             delete database_;
             database_ = nullptr;
-        }
-
-        if (recognizer_factory_) {
-            delete recognizer_factory_;
-            recognizer_factory_ = nullptr;
         }
     }
 
@@ -81,9 +72,9 @@ public:
 
         return 0;
     }
-	inline int Track(const std::vector<FaceInfo>& curr_faces, std::vector<TrackedFaceInfo>* faces) {
-		return tracker_->Track(curr_faces, faces);
-	}
+    inline std::vector<TrackedFaceInfo> Track(const std::vector<FaceInfo>& curr_faces) {
+        return tracker_->Track(curr_faces);
+    }
     inline std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) {
         return detecter_->DetectFace(img_src);
     }
@@ -94,8 +85,8 @@ public:
     inline int AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat * face_aligned) {
         return aligner_->AlignFace(img_src, keypoints, face_aligned);
     }
-    inline int ExtractFeature(const cv::Mat& img_face, std::vector<float>* feat) {
-        return recognizer_->ExtractFeature(img_face, feat);
+    inline std::vector<float> ExtractFeature(const cv::Mat& img_face) {
+        return recognizer_->ExtractFeature(img_face);
     }
 
     inline int Insert(const std::vector<float>& feat, const std::string& name) {
@@ -115,16 +106,13 @@ public:
     }
 
 private:
-    RecognizerFactory* recognizer_factory_ = nullptr;
-
-private:
     bool initialized_;
     std::string db_name_;
     Aligner* aligner_ = nullptr;
     std::unique_ptr<Detecter> detecter_;
 	Tracker* tracker_ = nullptr;
     std::unique_ptr<Landmarker> landmarker_;
-    Recognizer* recognizer_ = nullptr;
+    std::unique_ptr<Recognizer> recognizer_;
     FaceDatabase* database_ = nullptr;
 };
 
@@ -143,9 +131,8 @@ int FaceEngine::LoadModel(const char* root_path) {
     return impl_->LoadModel(root_path);
 }
 
-int FaceEngine::Track(const std::vector<FaceInfo>& curr_faces,
-	std::vector<TrackedFaceInfo>* faces) {
-	return impl_->Track(curr_faces, faces);
+std::vector<TrackedFaceInfo> FaceEngine::Track(const std::vector<FaceInfo>& curr_faces) {
+	return impl_->Track(curr_faces);
 }
 
 std::vector<FaceInfo> FaceEngine::DetectFace(const cv::Mat& img_src) {
@@ -161,8 +148,8 @@ int FaceEngine::AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>
     return impl_->AlignFace(img_src, keypoints, face_aligned);
 }
 
-int FaceEngine::ExtractFeature(const cv::Mat& img_face, std::vector<float>* feat) {
-    return impl_->ExtractFeature(img_face, feat);
+std::vector<float> FaceEngine::ExtractFeature(const cv::Mat& img_face) {
+    return impl_->ExtractFeature(img_face);
 }
 
 int FaceEngine::Insert(const std::vector<float>& feat, const std::string& name) {

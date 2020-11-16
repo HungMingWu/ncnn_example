@@ -19,11 +19,10 @@ public:
 	FACE_API ~FaceEngine();
 	FACE_API int LoadModel(const char* root_path);
 	FACE_API std::vector<FaceInfo> DetectFace(const cv::Mat& img_src);
-	FACE_API int Track(const std::vector<FaceInfo>& curr_faces,
-		std::vector<TrackedFaceInfo>* faces);
+	FACE_API std::vector<TrackedFaceInfo> Track(const std::vector<FaceInfo>& curr_faces);
 	FACE_API std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
 		const cv::Rect& face);
-	FACE_API int ExtractFeature(const cv::Mat& img_face, std::vector<float>* feature);
+	FACE_API std::vector<float> ExtractFeature(const cv::Mat& img_face);
 	FACE_API int AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat* face_aligned);
 
 	// database operation

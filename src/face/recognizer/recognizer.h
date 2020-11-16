@@ -10,23 +10,9 @@ class Recognizer {
 public:
 	virtual ~Recognizer() {};
 	virtual int LoadModel(const char* root_path) = 0;
-	virtual int ExtractFeature(const cv::Mat& img_face, std::vector<float>* feature) = 0;
+	virtual std::vector<float> ExtractFeature(const cv::Mat& img_face) = 0;
 
 };
-
-class RecognizerFactory {
-public:
-	virtual Recognizer* CreateRecognizer() = 0;
-	virtual ~RecognizerFactory() {}
-
-};
-
-class MobilefacenetRecognizerFactory : public RecognizerFactory {
-public:
-	MobilefacenetRecognizerFactory() {};
-	Recognizer* CreateRecognizer();
-	~MobilefacenetRecognizerFactory() {}
-};	
 
 }
 

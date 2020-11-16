@@ -41,17 +41,10 @@ int Mobilenet::LoadModel(const char * root_path) {
 
 	return 0;
 }
-int Mobilenet::Classify(const cv::Mat & img_src, std::vector<ImageInfo>* images) {
+std::vector<ImageInfo> Mobilenet::Classify(const cv::Mat & img_src) {
 	std::cout << "start classify." << std::endl;
-	images->clear();
-	if (!initialized_) {
-		std::cout << "model uninitialized." << std::endl;
-		return 10000;
-	}
-	if (img_src.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
+	assert(initialized_);
+	assert(!img_src.empty());
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_src.data, ncnn::Mat::PIXEL_BGR2RGB,
 		img_src.cols, img_src.rows, inputSize.width, inputSize.height);
 	in.substract_mean_normalize(meanVals, normVals);
@@ -70,15 +63,16 @@ int Mobilenet::Classify(const cv::Mat & img_src, std::vector<ImageInfo>* images)
 	std::partial_sort(scores.begin(), scores.begin() + topk, scores.end(),
 		std::greater< std::pair<float, int> >());
 
+	std::vector<ImageInfo> images;
 	for (int i = 0; i < topk; ++i) {
 		ImageInfo image_info;
 		image_info.label_ = labels_[scores[i].second];
 		image_info.score_ = scores[i].first;
-		images->push_back(image_info);
+		images.push_back(image_info);
 	}
 
 	std::cout << "end classify." << std::endl;
-	return 0;
+	return images;
 }
 
 int Mobilenet::LoadLabels(const char * root_path) {

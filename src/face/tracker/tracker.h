@@ -10,8 +10,7 @@ class Tracker {
 public:
     Tracker();
     ~Tracker();
-    int Track(const std::vector<FaceInfo>& curr_faces,
-        std::vector<TrackedFaceInfo>* faces);
+    std::vector<TrackedFaceInfo> Track(const std::vector<FaceInfo>& curr_faces);
 
 private:
     std::vector<TrackedFaceInfo> pre_tracked_faces_;

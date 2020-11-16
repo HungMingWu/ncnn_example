@@ -23,7 +23,7 @@ public:
 	OBJECT_API ~ObjectEngine();
 
 	OBJECT_API int LoadModel(const char* root_path);
-	OBJECT_API int DetectObject(const cv::Mat& img_src, std::vector<ObjectInfo>* objects);
+	OBJECT_API std::vector<ObjectInfo> DetectObject(const cv::Mat& img_src);
 
 private:
 	class Impl;

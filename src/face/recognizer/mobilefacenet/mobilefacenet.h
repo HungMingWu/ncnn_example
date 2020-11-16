@@ -13,7 +13,7 @@ public:
 	~Mobilefacenet();
 
 	int LoadModel(const char* root_path);
-	int ExtractFeature(const cv::Mat& img_face, std::vector<float>* feature);
+	std::vector<float> ExtractFeature(const cv::Mat& img_face);
 
 private:
 	ncnn::Net mobileface_net_;
