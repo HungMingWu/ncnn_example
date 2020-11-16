@@ -6,7 +6,7 @@ namespace mirror {
 std::vector<mirror::Rect> RatioAnchors(const mirror::Rect & anchor,
 	const std::vector<float>& ratios) {
 	std::vector<mirror::Rect> anchors;
-	cv::Point center = cv::Point(anchor.x + (anchor.width - 1) * 0.5f,
+	mirror::Point center(anchor.x + (anchor.width - 1) * 0.5f,
 		anchor.y + (anchor.height - 1) * 0.5f);
 	float anchor_size = anchor.width * anchor.height;
 #if defined(_OPENMP)
@@ -58,9 +58,9 @@ std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 }
 
 float InterRectArea(const cv::Rect & a, const cv::Rect & b) {
-	cv::Point left_top = cv::Point(MAX(a.x, b.x), MAX(a.y, b.y));
-	cv::Point right_bottom = cv::Point(MIN(a.br().x, b.br().x), MIN(a.br().y, b.br().y));
-	cv::Point diff = right_bottom - left_top;
+	mirror::Point left_top(MAX(a.x, b.x), MAX(a.y, b.y));
+	mirror::Point right_bottom(MIN(a.br().x, b.br().x), MIN(a.br().y, b.br().y));
+	mirror::Point diff = right_bottom - left_top;
 	return (MAX(diff.x + 1, 0) * MAX(diff.y + 1, 0));
 }
 

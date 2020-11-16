@@ -37,6 +37,13 @@ struct Point_
     _Tp x;
     _Tp y;
 };
+
+template<typename _Tp> static inline
+Point_<_Tp> operator - (const Point_<_Tp>& a, const Point_<_Tp>& b)
+{
+    return Point_<_Tp>(a.x - b.x, a.y - b.y);
+}
+
 using Point2f = Point_<float>;
 using Point2i = Point_<int>;
 using Point = Point2i;
@@ -128,5 +135,6 @@ void RectifyRect(cv::Rect* rect);
 }
 
 #endif // !_COMMON_H_
+
 
 
