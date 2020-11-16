@@ -20,8 +20,7 @@ std::vector<TrackedFaceInfo> Tracker::Track(const std::vector<FaceInfo>& curr_fa
     for (int i = 0; i < num_faces; ++i) {
         auto& face = curr_faces.at(i);
         for (auto scored_tracked_face : scored_tracked_faces) {
-            ComputeIOU(scored_tracked_face.face_info_.location_,
-                face.location_, &scored_tracked_face.iou_score_);
+            scored_tracked_face.iou_score_ = ComputeIOU(scored_tracked_face.face_info_.location_, face.location_);
         }
         if (scored_tracked_faces.size() > 0) {
             std::partial_sort(scored_tracked_faces.begin(),

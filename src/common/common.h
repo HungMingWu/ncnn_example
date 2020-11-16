@@ -28,6 +28,19 @@ struct Rect_
 
 using Rect = Rect_<int>;
 
+template<typename _Tp>
+struct Point_
+{
+    Point_() : x(0), y(0) {}
+    Point_(_Tp _x, _Tp _y) : x(_x), y(_y) {}
+
+    _Tp x;
+    _Tp y;
+};
+using Point2f = Point_<float>;
+using Point2i = Point_<int>;
+using Point = Point2i;
+
 struct ImageInfo {
     std::string label_;
     float score_;
@@ -68,8 +81,8 @@ std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 float InterRectArea(const cv::Rect & a,
 	const cv::Rect & b);
 
-int ComputeIOU(const cv::Rect & rect1,
-	const cv::Rect & rect2, float * iou,
+float ComputeIOU(const cv::Rect & rect1,
+	const cv::Rect & rect2,
 	const std::string& type = "UNION");
 
 template <typename T>
@@ -99,8 +112,7 @@ std::vector<T> NMS(const std::vector<T>& inputs,
         indexes.clear();
         for (int i = 1; i < tmp_indexes.size(); i++) {
             int tmp_i = tmp_indexes[i];
-            float iou = 0.0f;
-            ComputeIOU(inputs_tmp[good_idx].location_, inputs_tmp[tmp_i].location_, &iou, type);
+            float iou = ComputeIOU(inputs_tmp[good_idx].location_, inputs_tmp[tmp_i].location_, type);
             if (iou <= threshold) {
                 indexes.push_back(tmp_i);
             }
