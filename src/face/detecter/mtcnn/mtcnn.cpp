@@ -70,12 +70,12 @@ int Mtcnn::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<FaceInfo> Mtcnn::DetectFace(const cv::Mat & img_src) {
-	assert(!img_src.empty());
+std::vector<FaceInfo> Mtcnn::DetectFace(const mirror::ImageMetaInfo& img_src) {
+	assert(img_src.data);
 	assert(initialized_);
-	cv::Size max_size = cv::Size(img_src.cols, img_src.rows);
+	cv::Size max_size = cv::Size(img_src.width, img_src.height);
 	ncnn::Mat img_in = ncnn::Mat::from_pixels(img_src.data,
-		ncnn::Mat::PIXEL_BGR2RGB, img_src.cols, img_src.rows);
+		ncnn::Mat::PIXEL_BGR2RGB, img_src.width, img_src.height);
 	img_in.substract_mean_normalize(meanVals, normVals);
 	
 	std::vector<FaceInfo> first_bboxes = PDetect(img_in);
@@ -150,7 +150,7 @@ std::vector<FaceInfo> Mtcnn::PDetect(const ncnn::Mat & img_in) {
 				face_info.location_.y = y1 + y1_reg * bbox_height;
 				face_info.location_.width = x2 + x2_reg * bbox_width - face_info.location_.x;
 				face_info.location_.height = y2 + y2_reg * bbox_height - face_info.location_.y;
-				face_info.location_ = face_info.location_ & cv::Rect(0, 0, width, height);
+				face_info.location_ = face_info.location_ & mirror::Rect(0, 0, width, height);
 				first_bboxes.push_back(face_info);
 			}
 		}
@@ -162,7 +162,7 @@ std::vector<FaceInfo> Mtcnn::RDetect(const ncnn::Mat & img_in,
 	const std::vector<FaceInfo>& first_bboxes) {
 	std::vector<FaceInfo> second_bboxes;
 	for (int i = 0; i < static_cast<int>(first_bboxes.size()); ++i) {
-		cv::Rect face = first_bboxes.at(i).location_ & cv::Rect(0, 0, img_in.w, img_in.h);
+		auto face = first_bboxes.at(i).location_ & mirror::Rect(0, 0, img_in.w, img_in.h);
 		ncnn::Mat img_face, img_resized;
 		ncnn::copy_cut_border(img_in, img_face, face.y, img_in.h - face.br().y, face.x, img_in.w - face.br().x);
 		ncnn::resize_bilinear(img_face, img_resized, 24, 24);
@@ -197,7 +197,7 @@ std::vector<FaceInfo> Mtcnn::ODetect(const ncnn::Mat & img_in,
 	const std::vector<FaceInfo>& second_bboxes) {
 	std::vector<FaceInfo> third_bboxes;
 	for (int i = 0; i < static_cast<int>(second_bboxes.size()); ++i) {
-		cv::Rect face = second_bboxes.at(i).location_ & cv::Rect(0, 0, img_in.w, img_in.h);
+		auto face = second_bboxes.at(i).location_ & mirror::Rect(0, 0, img_in.w, img_in.h);
 		ncnn::Mat img_face, img_resized;
 		ncnn::copy_cut_border(img_in, img_face, face.y, img_in.h - face.br().y, face.x, img_in.w - face.br().x);
 		ncnn::resize_bilinear(img_face, img_resized, 48, 48);
@@ -246,7 +246,7 @@ int Mtcnn::Refine(std::vector<FaceInfo>& bboxes, const cv::Size max_size) {
 		face_info.location_.y = face_info.location_.y + 0.5 * height - 0.5 * max_side;
 		face_info.location_.width = max_side;
 		face_info.location_.height = max_side;
-		face_info.location_ = face_info.location_ & cv::Rect(0, 0, max_size.width, max_size.height);
+		face_info.location_ = face_info.location_ & mirror::Rect(0, 0, max_size.width, max_size.height);
 	}
 	
 	return 0;

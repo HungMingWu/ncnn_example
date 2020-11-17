@@ -23,7 +23,7 @@ public:
 	CLASSIFIER_API ClassifierEngine();
 	CLASSIFIER_API ~ClassifierEngine();
 	CLASSIFIER_API int LoadModel(const char* root_path);
-	CLASSIFIER_API std::vector<ImageInfo> Classify(const cv::Mat& img_src);
+	CLASSIFIER_API std::vector<ImageInfo> Classify(const mirror::ImageMetaInfo& img_src);
 
 private:
 	class Impl;

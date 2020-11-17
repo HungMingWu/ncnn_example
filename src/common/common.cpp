@@ -54,15 +54,15 @@ std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 	return ScaleAnchors(ratio_anchors, scales);
 }
 
-float InterRectArea(const cv::Rect & a, const cv::Rect & b) {
+float InterRectArea(const mirror::Rect & a, const mirror::Rect & b) {
 	mirror::Point left_top(MAX(a.x, b.x), MAX(a.y, b.y));
 	mirror::Point right_bottom(MIN(a.br().x, b.br().x), MIN(a.br().y, b.br().y));
 	mirror::Point diff = right_bottom - left_top;
 	return (MAX(diff.x + 1, 0) * MAX(diff.y + 1, 0));
 }
 
-float ComputeIOU(const cv::Rect & rect1,
-	const cv::Rect & rect2, const std::string& type) {
+float ComputeIOU(const mirror::Rect & rect1,
+	const mirror::Rect & rect2, const std::string& type) {
 
 	float inter_area = InterRectArea(rect1, rect2);
 	if (type == "UNION") {
@@ -92,7 +92,7 @@ float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<f
 	return inner_product / sqrt(feature_norm1) / sqrt(feature_norm2);
 }
 
-void EnlargeRect(const float& scale, cv::Rect* rect) {
+void EnlargeRect(const float& scale, mirror::Rect* rect) {
         float offset_x = (scale - 1.f) / 2.f * rect->width;
     float offset_y = (scale - 1.f) / 2.f * rect->height;
     rect->x -= offset_x;
@@ -101,7 +101,7 @@ void EnlargeRect(const float& scale, cv::Rect* rect) {
     rect->height = scale * rect->height;
 }
 
-void RectifyRect(cv::Rect* rect) {
+void RectifyRect(mirror::Rect* rect) {
         int max_side = MAX(rect->width, rect->height);
         int offset_x = (max_side - rect->width) / 2;
         int offset_y = (max_side - rect->height) / 2;
@@ -110,6 +110,17 @@ void RectifyRect(cv::Rect* rect) {
         rect->y -= offset_y;
         rect->width = max_side;
         rect->height = max_side;
+}
+
+std::vector<uint8_t> CopyImageFromRange(const mirror::ImageMetaInfo& img_src, const mirror::Rect& face)
+{
+	std::vector<uint8_t> result;
+	int channels = img_src.channels;
+	for (int y = face.y; y < face.y + face.height; y++)
+		for (int x = face.x; x < face.x + face.width; x++)
+			for (int c = 0; c < img_src.channels; c++)
+				result.push_back(img_src.data[img_src.width * y * channels + x * channels + c]);
+	return result;
 }
 
 }

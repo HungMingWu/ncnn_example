@@ -11,7 +11,7 @@ public:
 	Mobilenet();
 	~Mobilenet();
 	int LoadModel(const char* root_path);
-	std::vector<ImageInfo> Classify(const cv::Mat& img_src);
+	std::vector<ImageInfo> Classify(const mirror::ImageMetaInfo& img_src) override;
 
 private:
 	bool initialized_;

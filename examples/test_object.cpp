@@ -2,6 +2,7 @@
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "object_engine.h"
+#include "image_helper.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
@@ -14,11 +15,11 @@ int main(int argc, char* argv[]) {
 	object_engine->LoadModel(model_root_path);
 
 	double start = static_cast<double>(cv::getTickCount());
-	std::vector<mirror::ObjectInfo> objects = object_engine->DetectObject(img_src);
+	std::vector<mirror::ObjectInfo> objects = object_engine->DetectObject(toImageInfo(img_src));
 
 	int num_objects = static_cast<int>(objects.size());
 	for (int i = 0; i < num_objects; ++i) {
-		cv::rectangle(img_src, objects[i].location_, cv::Scalar(255, 0, 255), 2);
+		cv::rectangle(img_src, toRect(objects[i].location_), cv::Scalar(255, 0, 255), 2);
 
 		char text[256];
 		sprintf(text, "%s %.1f%%", objects[i].name_.c_str(), objects[i].score_ * 100);

@@ -40,12 +40,12 @@ int CenterFace::LoadModel(const char* root_path) {
     return 0;
 }
 
-std::vector<FaceInfo> CenterFace::DetectFace(const cv::Mat& img_src) {
+std::vector<FaceInfo> CenterFace::DetectFace(const mirror::ImageMetaInfo& img_src) {
     std::cout << "start detect." << std::endl;
     assert(initialized_);
-    assert(!img_src.empty());
-    int img_width = img_src.cols;
-	int img_height = img_src.rows;
+    assert(img_src.data);
+    int img_width = img_src.width;
+	int img_height = img_src.height;
 
 	int img_width_new  = img_width / 32 * 32;
 	int img_height_new = img_height / 32 * 32;

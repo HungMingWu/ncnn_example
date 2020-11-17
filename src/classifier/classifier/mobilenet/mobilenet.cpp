@@ -41,12 +41,12 @@ int Mobilenet::LoadModel(const char * root_path) {
 
 	return 0;
 }
-std::vector<ImageInfo> Mobilenet::Classify(const cv::Mat & img_src) {
+std::vector<ImageInfo> Mobilenet::Classify(const mirror::ImageMetaInfo& img_src) {
 	std::cout << "start classify." << std::endl;
 	assert(initialized_);
-	assert(!img_src.empty());
+	assert(img_src.data);
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_src.data, ncnn::Mat::PIXEL_BGR2RGB,
-		img_src.cols, img_src.rows, inputSize.width, inputSize.height);
+		img_src.width, img_src.height, inputSize.width, inputSize.height);
 	in.substract_mean_normalize(meanVals, normVals);
 
 	ncnn::Extractor ex = mobilenet_->create_extractor();

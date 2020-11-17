@@ -2,6 +2,7 @@
 #define _FACE_ALIGNER_H_
 
 #include "opencv2/core.hpp"
+#include "common.h"
 
 namespace mirror {
 class Aligner {
@@ -10,7 +11,7 @@ public:
 	~Aligner();
 
 	int AlignFace(const cv::Mat & img_src,
-		const std::vector<cv::Point2f>& keypoints, cv::Mat * face_aligned);
+		const std::vector<mirror::Point2f>& keypoints, cv::Mat * face_aligned);
 
 private:
 	class Impl;

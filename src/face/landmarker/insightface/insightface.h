@@ -11,8 +11,8 @@ public:
 	~InsightfaceLandmarker();
 
 	int LoadModel(const char* root_path);
-	std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
-		const cv::Rect& face);
+	std::vector<mirror::Point2f> ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
+		const mirror::Rect& face) override;
 
 private:
 	ncnn::Net insightface_landmarker_net_;

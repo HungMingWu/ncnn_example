@@ -47,12 +47,12 @@ int RetinaFace::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<FaceInfo> RetinaFace::DetectFace(const cv::Mat & img_src) {
+std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_src) {
 	std::cout << "start face detect." << std::endl;
 	assert(initialized_);
-	assert(!img_src.empty());
-	int img_width = img_src.cols;
-	int img_height = img_src.rows;
+	assert(img_src.data);
+	int img_width = img_src.width;
+	int img_height = img_src.height;
 	float factor_x = static_cast<float>(img_width) / inputSize_.width;
 	float factor_y = static_cast<float>(img_height) / inputSize_.height;
 	ncnn::Extractor ex = retina_net_.create_extractor();
@@ -108,7 +108,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const cv::Mat & img_src) {
 					float curr_height = std::exp(delta_h) * (box.height + 1);
 
 					// 6.获取实际的矩形位置
-					cv::Rect curr_box = cv::Rect(center.x - curr_width * 0.5f,
+					mirror::Rect curr_box(center.x - curr_width * 0.5f,
 						center.y - curr_height * 0.5f, curr_width, 	curr_height);
 					curr_box.x = MAX(curr_box.x * factor_x, 0);
 					curr_box.y = MAX(curr_box.y * factor_y, 0);

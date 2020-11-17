@@ -12,7 +12,7 @@ public:
 	Mtcnn();
 	~Mtcnn();
 	int LoadModel(const char* root_path);
-	std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) override;
+	std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) override;
 
 private:
 	ncnn::Net* pnet_ = nullptr;

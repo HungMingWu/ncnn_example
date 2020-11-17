@@ -1,6 +1,7 @@
 #define CLASSIFIER_EXPORTS
 #include "classifier_engine.h"
 #include "opencv2/opencv.hpp"
+#include "image_helper.h"
 
 int main(int argc, char* argv[]) {
 	const char* img_path = "../../data/images/dog.jpg";
@@ -10,7 +11,7 @@ int main(int argc, char* argv[]) {
 	mirror::ClassifierEngine* classifier_engine = new mirror::ClassifierEngine();
 
 	classifier_engine->LoadModel(root_path);
-	std::vector<mirror::ImageInfo> images = classifier_engine->Classify(img_src);
+	std::vector<mirror::ImageInfo> images = classifier_engine->Classify(toImageInfo(img_src));
 
 	int topk = images.size();
 	for (int i = 0; i < topk; ++i) {

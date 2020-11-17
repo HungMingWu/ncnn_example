@@ -15,20 +15,6 @@ namespace mirror {
 const int threads_num = 2;
 
 template<typename _Tp>
-struct Rect_
-{
-    Rect_() : x(0), y(0), width(0), height(0) {}
-    Rect_(_Tp _x, _Tp _y, _Tp _w, _Tp _h) : x(_x), y(_y), width(_w), height(_h) {}
-
-    _Tp x;
-    _Tp y;
-    _Tp width;
-    _Tp height;
-};
-
-using Rect = Rect_<int>;
-
-template<typename _Tp>
 struct Point_
 {
     Point_() : x(0), y(0) {}
@@ -48,19 +34,64 @@ using Point2f = Point_<float>;
 using Point2i = Point_<int>;
 using Point = Point2i;
 
+template<typename _Tp>
+struct Rect_
+{
+    Rect_() : x(0), y(0), width(0), height(0) {}
+    Rect_(_Tp _x, _Tp _y, _Tp _w, _Tp _h) : x(_x), y(_y), width(_w), height(_h) {}
+
+    _Tp x;
+    _Tp y;
+    _Tp width;
+    _Tp height;
+
+    Point_<_Tp> br() const
+    {
+        return Point_<_Tp>(x + width, y + height);
+    }
+
+    _Tp area() const
+    {
+        return width * height;
+    }
+};
+
+template<typename _Tp> static inline
+Rect_<_Tp>& operator &= (Rect_<_Tp>& a, const Rect_<_Tp>& b)
+{
+    _Tp x1 = std::max(a.x, b.x);
+    _Tp y1 = std::max(a.y, b.y);
+    a.width = std::min(a.x + a.width, b.x + b.width) - x1;
+    a.height = std::min(a.y + a.height, b.y + b.height) - y1;
+    a.x = x1;
+    a.y = y1;
+    if (a.width <= 0 || a.height <= 0)
+        a = Rect_< _Tp>();
+    return a;
+}
+
+template<typename _Tp> static inline
+Rect_<_Tp> operator & (const Rect_<_Tp>& a, const Rect_<_Tp>& b)
+{
+    Rect_<_Tp> c = a;
+    return c &= b;
+}
+
+using Rect = Rect_<int>;
+
 struct ImageInfo {
     std::string label_;
     float score_;
 };
 
 struct ObjectInfo {
-	cv::Rect location_;
+    mirror::Rect location_;
 	float score_;
 	std::string name_;
 };
 
 struct FaceInfo {
-	cv::Rect location_;
+	mirror::Rect location_;
 	float score_;
 	float keypoints_[10];
     bool mask_;
@@ -76,6 +107,13 @@ struct QueryResult {
     float sim_;
 };
 
+struct ImageMetaInfo {
+    int width;
+    int height;
+    int channels;
+    unsigned char* data;
+};
+
 std::vector<mirror::Rect> RatioAnchors(const mirror::Rect & anchor,
 	const std::vector<float>& ratios);
 
@@ -85,12 +123,14 @@ std::vector<mirror::Rect> ScaleAnchors(const std::vector<mirror::Rect>& ratio_an
 std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 	const std::vector<float>& ratios, const std::vector<float> scales);
 
-float InterRectArea(const cv::Rect & a,
-	const cv::Rect & b);
+float InterRectArea(const mirror::Rect & a,
+	const mirror::Rect & b);
 
-float ComputeIOU(const cv::Rect & rect1,
-	const cv::Rect & rect2,
+float ComputeIOU(const mirror::Rect & rect1,
+	const mirror::Rect & rect2,
 	const std::string& type = "UNION");
+
+std::vector<uint8_t> CopyImageFromRange(const mirror::ImageMetaInfo& img_src, const mirror::Rect& face);
 
 template <typename T>
 std::vector<T> NMS(const std::vector<T>& inputs,
@@ -129,8 +169,8 @@ std::vector<T> NMS(const std::vector<T>& inputs,
 }
 
 float CalculateSimilarity(const std::vector<float>&feature1, const std::vector<float>& feature2);
-void EnlargeRect(const float& scale, cv::Rect* rect);
-void RectifyRect(cv::Rect* rect);
+void EnlargeRect(const float& scale, mirror::Rect* rect);
+void RectifyRect(mirror::Rect* rect);
 
 }
 

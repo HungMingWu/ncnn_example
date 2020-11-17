@@ -11,7 +11,7 @@ public:
 	~MobilenetSSD();
 
 	int LoadModel(const char* model_path);
-	std::vector<ObjectInfo> DetectObject(const cv::Mat& img_src);
+	std::vector<ObjectInfo> DetectObject(const mirror::ImageMetaInfo& img_src) override;
 
 private:
 	ncnn::Net* mobilenetssd_ = nullptr;

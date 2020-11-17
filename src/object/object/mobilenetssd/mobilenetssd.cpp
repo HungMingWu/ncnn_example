@@ -44,15 +44,15 @@ int MobilenetSSD::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<ObjectInfo> MobilenetSSD::DetectObject(const cv::Mat & img_src) {
+std::vector<ObjectInfo> MobilenetSSD::DetectObject(const mirror::ImageMetaInfo& img_src) {
 	std::cout << "start object detect." << std::endl;
 	assert(initialized_);
-	assert(!img_src.empty());
-	int width = img_src.cols;
-	int height = img_src.rows;
+	assert(img_src.data);
+	int width = img_src.width;
+	int height = img_src.height;
 
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_src.data,
-		ncnn::Mat::PIXEL_BGR, img_src.cols, img_src.rows, 300, 300);
+		ncnn::Mat::PIXEL_BGR, img_src.width, img_src.height, 300, 300);
 	in.substract_mean_normalize(meanVals, normVals);
 
 	ncnn::Extractor ex = mobilenetssd_->create_extractor();

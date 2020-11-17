@@ -10,7 +10,7 @@ class Detecter {
 public:
 	virtual ~Detecter() {};
 	virtual int LoadModel(const char* root_path) = 0;
-	virtual std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) = 0;
+	virtual std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) = 0;
 
 };
 

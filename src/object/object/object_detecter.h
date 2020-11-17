@@ -10,7 +10,7 @@ class ObjectDetecter {
 public:
 	virtual ~ObjectDetecter() {}
 	virtual int LoadModel(const char* root_path) = 0;
-	virtual std::vector<ObjectInfo> DetectObject(const cv::Mat& img_src) = 0;
+	virtual std::vector<ObjectInfo> DetectObject(const mirror::ImageMetaInfo& img_src) = 0;
 };
 
 }

@@ -11,7 +11,7 @@ public:
 	AntiConv();
 	~AntiConv();
 	int LoadModel(const char* root_path);
-	std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) override;
+	std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) override;
 
 private:
 	ncnn::Net* anticonv_net_;

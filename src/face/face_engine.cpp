@@ -75,17 +75,17 @@ public:
     inline std::vector<TrackedFaceInfo> Track(const std::vector<FaceInfo>& curr_faces) {
         return tracker_->Track(curr_faces);
     }
-    inline std::vector<FaceInfo> DetectFace(const cv::Mat& img_src) {
+    inline std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) {
         return detecter_->DetectFace(img_src);
     }
-    inline std::vector<cv::Point2f> ExtractKeypoints(const cv::Mat& img_src,
-		const cv::Rect& face) {
+    inline std::vector<mirror::Point2f> ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
+		const mirror::Rect& face) {
         return landmarker_->ExtractKeypoints(img_src, face);
     }
-    inline int AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat * face_aligned) {
+    inline int AlignFace(const cv::Mat& img_src, const std::vector<mirror::Point2f>& keypoints, cv::Mat * face_aligned) {
         return aligner_->AlignFace(img_src, keypoints, face_aligned);
     }
-    inline std::vector<float> ExtractFeature(const cv::Mat& img_face) {
+    inline std::vector<float> ExtractFeature(const mirror::ImageMetaInfo& img_face) {
         return recognizer_->ExtractFeature(img_face);
     }
 
@@ -135,20 +135,20 @@ std::vector<TrackedFaceInfo> FaceEngine::Track(const std::vector<FaceInfo>& curr
 	return impl_->Track(curr_faces);
 }
 
-std::vector<FaceInfo> FaceEngine::DetectFace(const cv::Mat& img_src) {
+std::vector<FaceInfo> FaceEngine::DetectFace(const mirror::ImageMetaInfo& img_src) {
     return impl_->DetectFace(img_src);
 }
 
-std::vector<cv::Point2f> FaceEngine::ExtractKeypoints(const cv::Mat& img_src,
-	const cv::Rect& face) {
+std::vector<mirror::Point2f> FaceEngine::ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
+	const mirror::Rect& face) {
     return impl_->ExtractKeypoints(img_src, face);
 }
 
-int FaceEngine::AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat* face_aligned) {
+int FaceEngine::AlignFace(const cv::Mat& img_src, const std::vector<mirror::Point2f>& keypoints, cv::Mat* face_aligned) {
     return impl_->AlignFace(img_src, keypoints, face_aligned);
 }
 
-std::vector<float> FaceEngine::ExtractFeature(const cv::Mat& img_face) {
+std::vector<float> FaceEngine::ExtractFeature(const mirror::ImageMetaInfo& img_face) {
     return impl_->ExtractFeature(img_face);
 }
 

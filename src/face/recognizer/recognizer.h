@@ -10,7 +10,7 @@ class Recognizer {
 public:
 	virtual ~Recognizer() {};
 	virtual int LoadModel(const char* root_path) = 0;
-	virtual std::vector<float> ExtractFeature(const cv::Mat& img_face) = 0;
+	virtual std::vector<float> ExtractFeature(const mirror::ImageMetaInfo& img_face) = 0;
 
 };
 

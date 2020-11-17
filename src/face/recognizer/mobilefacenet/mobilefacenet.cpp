@@ -33,13 +33,12 @@ int Mobilefacenet::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<float> Mobilefacenet::ExtractFeature(const cv::Mat & img_face) {
+std::vector<float> Mobilefacenet::ExtractFeature(const mirror::ImageMetaInfo& img_face) {
 	std::cout << "start extract feature." << std::endl;
 	assert(initialized_);
-	assert(!img_face.empty());
-	cv::Mat face_cpy = img_face.clone();
-	ncnn::Mat in = ncnn::Mat::from_pixels_resize(face_cpy.data,
-		ncnn::Mat::PIXEL_BGR2RGB, face_cpy.cols, face_cpy.rows, 112, 112);
+	assert(img_face.data);
+	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face.data,
+		ncnn::Mat::PIXEL_BGR2RGB, img_face.width, img_face.height, 112, 112);
 	ncnn::Extractor ex = mobileface_net_.create_extractor();
 	ex.input("data", in);
 	ncnn::Mat out;

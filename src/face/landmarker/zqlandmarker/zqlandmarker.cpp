@@ -1,6 +1,7 @@
 #include "zqlandmarker.h"
 #include <iostream>
 #include <string>
+#include "../../common/common.h"
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -35,27 +36,26 @@ int ZQLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<cv::Point2f> ZQLandmarker::ExtractKeypoints(const cv::Mat & img_src,
-	const cv::Rect & face) {
+std::vector<mirror::Point2f> ZQLandmarker::ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
+	const mirror::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
 	assert(initialized);
-	assert(!img_src.empty());
-	std::vector<cv::Point2f> keypoints;
-	cv::Mat img_face = img_src(face).clone();
+	assert(img_src.data);
+	std::vector<mirror::Point2f> keypoints;
+	auto crop_image = CopyImageFromRange(img_src, face);
 	ncnn::Extractor ex = zq_landmarker_net_->create_extractor();
-	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face.data,
-		ncnn::Mat::PIXEL_BGR, img_face.cols, img_face.rows, 112, 112);
+	ncnn::Mat in = ncnn::Mat::from_pixels_resize(crop_image.data(),
+		ncnn::Mat::PIXEL_BGR, face.width, face.height, 112, 112);
 	in.substract_mean_normalize(meanVals, normVals);
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("bn6_3", out);
 
 	for (int i = 0; i < 106; ++i) {
-		float x = abs(out[2 * i] * img_face.cols) + face.x;
-		float y = abs(out[2 * i + 1] * img_face.rows) + face.y;
-		keypoints.push_back(cv::Point2f(x, y));
+		float x = abs(out[2 * i] * face.width) + face.x;
+		float y = abs(out[2 * i + 1] * face.height) + face.y;
+		keypoints.emplace_back(x, y);
 	}
-
 
 	std::cout << "end extract keypoints." << std::endl;
 	return keypoints;

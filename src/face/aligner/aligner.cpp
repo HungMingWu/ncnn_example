@@ -6,7 +6,7 @@
 namespace mirror {
 class Aligner::Impl {
 public:
-	int AlignFace(const cv::Mat& img_src, const std::vector<cv::Point2f>& keypoints, cv::Mat* face_aligned);
+	int AlignFace(const cv::Mat& img_src, const std::vector<mirror::Point2f>& keypoints, cv::Mat* face_aligned);
 
 private:
 	cv::Mat MeanAxis0(const cv::Mat &src);
@@ -36,12 +36,12 @@ Aligner::~Aligner() {
 }
 
 int Aligner::AlignFace(const cv::Mat & img_src,
-	const std::vector<cv::Point2f>& keypoints, cv::Mat * face_aligned) {
+	const std::vector<mirror::Point2f>& keypoints, cv::Mat * face_aligned) {
 	return impl_->AlignFace(img_src, keypoints, face_aligned);
 }
 
 int Aligner::Impl::AlignFace(const cv::Mat & img_src,
-	const std::vector<cv::Point2f>& keypoints, cv::Mat * face_aligned) {
+	const std::vector<mirror::Point2f>& keypoints, cv::Mat * face_aligned) {
 	std::cout << "start align face." << std::endl;
 	if (img_src.empty()) {
 		std::cout << "input empty." << std::endl;

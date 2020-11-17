@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include "../../common/common.h"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/highgui.hpp"
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -34,36 +36,36 @@ int InsightfaceLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<cv::Point2f> InsightfaceLandmarker::ExtractKeypoints(const cv::Mat & img_src,
-	const cv::Rect & face) {
+std::vector<mirror::Point2f> InsightfaceLandmarker::ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
+	const mirror::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
 	assert(initialized);
-	assert(!img_src.empty());
-	std::vector<cv::Point2f> keypoints;
+	assert(img_src.data);
+	std::vector<mirror::Point2f> keypoints;
 	// 1 enlarge the face rect
-	cv::Rect face_enlarged = face;
+	mirror::Rect face_enlarged = face;
 	const float enlarge_scale = 1.5f;
 	EnlargeRect(enlarge_scale, &face_enlarged);
 
 	// 2 square the rect
 	RectifyRect(&face_enlarged);
-	face_enlarged = face_enlarged & cv::Rect(0, 0, img_src.cols, img_src.rows);
+	face_enlarged = face_enlarged & mirror::Rect(0, 0, img_src.width, img_src.height);
 
 	// 3 crop the face
-	cv::Mat img_face = img_src(face_enlarged).clone();
+	std::vector<uint8_t> img_face = CopyImageFromRange(img_src, face_enlarged);
 
 	// 4 do inference
 	ncnn::Extractor ex = insightface_landmarker_net_.create_extractor();
-	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face.data,
-		ncnn::Mat::PIXEL_BGR2RGB, img_face.cols, img_face.rows, 192, 192);
+	ncnn::Mat in = ncnn::Mat::from_pixels_resize(img_face.data(),
+		ncnn::Mat::PIXEL_BGR2RGB, face_enlarged.width, face_enlarged.height, 192, 192);
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("fc1", out);
 
 	for (int i = 0; i < 106; ++i) {
-		float x = (out[2 * i] + 1.0f) * img_face.cols / 2 + face_enlarged.x;
-		float y = (out[2 * i + 1] + 1.0f) * img_face.rows / 2 + face_enlarged.y;
-		keypoints.push_back(cv::Point2f(x, y));
+		float x = (out[2 * i] + 1.0f) * face_enlarged.width / 2 + face_enlarged.x;
+		float y = (out[2 * i + 1] + 1.0f) * face_enlarged.height / 2 + face_enlarged.y;
+		keypoints.emplace_back(x, y);
 	}
 
 	std::cout << "end extract keypoints." << std::endl;
