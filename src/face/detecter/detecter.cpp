@@ -1,6 +1,6 @@
 #include <memory>
 #include <detecter.h>
-#include <orbwebai/detecter/detecter.h>
+#include <orbwebai/face/detecter.h>
 
 // Use for detecter_
 #include "retinaface/retinaface.h"

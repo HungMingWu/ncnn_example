@@ -1,6 +1,6 @@
 #include "file_stream.h"
 
-namespace mirror {
+namespace orbwebai {
 bool FileStream::open(const std::string & path, int mode) {
 	close();
 	std::string mode_str;

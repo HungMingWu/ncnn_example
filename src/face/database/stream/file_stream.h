@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-namespace mirror {
+namespace orbwebai {
 
 class StreamWriter {
 public:

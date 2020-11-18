@@ -16,3 +16,9 @@ inline cv::Point2f toPoint(orbwebai::Point2f point)
 {
 	return cv::Point2d(point.x, point.y);
 }
+
+template <typename T, typename ...Ts>
+std::unique_ptr<T> make_unique(Ts&& ...args)
+{
+	return std::unique_ptr<T>(new T(std::forward<Ts>(args)...));
+}

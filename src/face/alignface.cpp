@@ -1,43 +1,18 @@
-#include <iostream>
+#include <assert.h>
+#include <orbwebai/face/compute.h>
 #include <Eigen/Geometry>
-#include <orbwebai/structure.h>
-#include "aligner.h"
 
-namespace mirror {
-class Aligner::Impl {
-public:
-	int AlignFace(const orbwebai::ImageMetaInfo& img_src,
-		const std::vector<orbwebai::Point2f>& keypoints, orbwebai::ImageMetaInfo*);
-
-private:
-	float points_dst[5][2] = {
+void orbwebai::face::AlignFace(const orbwebai::ImageMetaInfo& img_src, const std::vector<orbwebai::Point2f>& keypoints,
+	orbwebai::ImageMetaInfo* output)
+{
+	static constexpr float points_dst[5][2] = {
 		{ 30.2946f + 8.0f, 51.6963f },
 		{ 65.5318f + 8.0f, 51.5014f },
 		{ 48.0252f + 8.0f, 71.7366f },
 		{ 33.5493f + 8.0f, 92.3655f },
 		{ 62.7299f + 8.0f, 92.2041f }
 	};
-};
 
-
-Aligner::Aligner() {
-	impl_ = new Impl();
-}
-
-Aligner::~Aligner() {
-	if (impl_) {
-		delete impl_;
-	}
-}
-
-int Aligner::AlignFace(const orbwebai::ImageMetaInfo& img_src,
-	const std::vector<orbwebai::Point2f>& keypoints, orbwebai::ImageMetaInfo*p) {
-	return impl_->AlignFace(img_src, keypoints, p);
-}
-
-int Aligner::Impl::AlignFace(const orbwebai::ImageMetaInfo& img_src,
-	const std::vector<orbwebai::Point2f>& keypoints, orbwebai::ImageMetaInfo*p) {
-	std::cout << "start align face." << std::endl;
 	assert(img_src.data);
 	assert(keypoints.size() > 0);
 
@@ -84,22 +59,17 @@ int Aligner::Impl::AlignFace(const orbwebai::ImageMetaInfo& img_src,
 
 	auto inverse_trans = Eigen::umeyama(umeyamaDest, umeyamaSrc);
 
-	int channels = p->channels;
-	for (int dsty = 0; dsty < p->height; dsty++)
-		for (int dstx = 0; dstx < p->width; dstx++) {
+	int channels = output->channels;
+	for (int dsty = 0; dsty < output->height; dsty++)
+		for (int dstx = 0; dstx < output->width; dstx++) {
 			int srcx = static_cast<int>(dstx * inverse_trans(0, 0) + dsty * inverse_trans(0, 1) + inverse_trans(0, 2));
 			int srcy = static_cast<int>(dstx * inverse_trans(1, 0) + dsty * inverse_trans(1, 1) + inverse_trans(1, 2));
 			if (srcx >= 0 && srcx < img_src.width && srcy >= 0 && srcy < img_src.height)
 			{
 				auto* src_ptr = &img_src.data[img_src.width * srcy * channels + srcx * channels];
-				auto* dst_ptr = &p->data[p->width * dsty * channels + dstx * channels];
+				auto* dst_ptr = &output->data[output->width * dsty * channels + dstx * channels];
 				for (int c = 0; c < channels; c++)
 					dst_ptr[c] = src_ptr[c];
 			}
 		}
-
-	std::cout << "end align face." << std::endl;
-	return 0;
-}
-
 }

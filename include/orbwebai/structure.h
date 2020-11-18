@@ -96,6 +96,4 @@ namespace orbwebai
             float sim_;
         };
     }
-
-    float CalculateSimilarity(const std::vector<float>& feature1, const std::vector<float>& feature2);
 }

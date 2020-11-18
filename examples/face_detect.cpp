@@ -2,6 +2,7 @@
 #include "opencv2/opencv.hpp"
 #include "face_engine.h"
 #include "image_helper.h"
+#include <orbwebai/face/detecter.h>
 
 using namespace mirror;
 
@@ -10,10 +11,10 @@ int main(int argc, char* argv[]) {
 	cv::Mat img_src = cv::imread(img_file);
 	const char* root_path = "../../../..//data/models";
 
-	FaceEngine* face_engine = new FaceEngine();
-	face_engine->LoadModel(root_path);
+	auto faceDetector = make_unique<orbwebai::face::Detector>();
+	faceDetector->LoadModel(root_path);
 	double start = static_cast<double>(cv::getTickCount());
-	auto faces = face_engine->DetectFace(toImageInfo(img_src));
+	auto faces = faceDetector->DetectFace(toImageInfo(img_src));
 	double end = static_cast<double>(cv::getTickCount());
 	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
 	std::cout << "time cost: " << time_cost << "ms" << std::endl;
@@ -29,9 +30,6 @@ int main(int argc, char* argv[]) {
 	cv::imwrite("../../../../data/images/retinaface_result.jpg", img_src);
 	cv::imshow("result", img_src);
 	cv::waitKey(0);
-
-	delete face_engine;
-	face_engine = nullptr;
 
 	return 0;
 }

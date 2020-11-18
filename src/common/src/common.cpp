@@ -9,22 +9,25 @@
 
 namespace orbwebai
 {
-	float CalculateSimilarity(
-		const std::vector<float>& feature1, 
-		const std::vector<float>& feature2) {
-		assert(feature1.size() == feature2.size());
-		float inner_product = 0.0f;
-		float feature_norm1 = 0.0f;
-		float feature_norm2 = 0.0f;
+	namespace face
+	{
+		float CalculateSimilarity(
+			const std::vector<float>& feature1,
+			const std::vector<float>& feature2) {
+			assert(feature1.size() == feature2.size());
+			float inner_product = 0.0f;
+			float feature_norm1 = 0.0f;
+			float feature_norm2 = 0.0f;
 #if defined(_OPENMP)
 #pragma omp parallel for num_threads(threads_num)
 #endif
-		for (int i = 0; i < orbwebai::kFaceFeatureDim; ++i) {
-			inner_product += feature1[i] * feature2[i];
-			feature_norm1 += feature1[i] * feature1[i];
-			feature_norm2 += feature2[i] * feature2[i];
+			for (int i = 0; i < orbwebai::kFaceFeatureDim; ++i) {
+				inner_product += feature1[i] * feature2[i];
+				feature_norm1 += feature1[i] * feature1[i];
+				feature_norm2 += feature2[i] * feature2[i];
+			}
+			return inner_product / sqrt(feature_norm1) / sqrt(feature_norm2);
 		}
-		return inner_product / sqrt(feature_norm1) / sqrt(feature_norm2);
 	}
 
 	static std::vector<orbwebai::Rect> 
