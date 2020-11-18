@@ -3,6 +3,7 @@
 #include "mobilenet.h"
 #include <algorithm>
 #include <string>
+#include <iostream>
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -42,7 +43,7 @@ int Mobilenet::LoadModel(const char * root_path) {
 
 	return 0;
 }
-std::vector<ImageInfo> Mobilenet::Classify(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::classify::Info> Mobilenet::Classify(const orbwebai::ImageMetaInfo& img_src) {
 	std::cout << "start classify." << std::endl;
 	assert(initialized_);
 	assert(img_src.data);
@@ -64,9 +65,9 @@ std::vector<ImageInfo> Mobilenet::Classify(const mirror::ImageMetaInfo& img_src)
 	std::partial_sort(scores.begin(), scores.begin() + topk, scores.end(),
 		std::greater< std::pair<float, int> >());
 
-	std::vector<ImageInfo> images;
+	std::vector<orbwebai::classify::Info> images;
 	for (int i = 0; i < topk; ++i) {
-		ImageInfo image_info;
+		orbwebai::classify::Info image_info;
 		image_info.label_ = labels_[scores[i].second];
 		image_info.score_ = scores[i].first;
 		images.push_back(image_info);

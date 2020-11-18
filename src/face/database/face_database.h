@@ -4,9 +4,9 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <orbwebai/structure.h>
 
 #include "./stream/file_stream.h"
-#include "../../common/common.h"
 
 namespace mirror {
 
@@ -19,7 +19,7 @@ public:
 	bool Load(const char* path);
 	int64_t Insert(const std::vector<float>& feat, const std::string& name);
 	int Delete(const std::string& name);
-	int64_t QueryTop(const std::vector<float>& feat, QueryResult* query_result = nullptr);
+	int64_t QueryTop(const std::vector<float>& feat, orbwebai::query::Result* query_result = nullptr);
 
 	void Clear();
 

@@ -7,7 +7,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -fPIC -std=c++11 -fopenmp")
 add_library(VisionEngine STATIC ${SRC_FILES})
 
 target_include_directories(VisionEngine
+PUBLIC
+    ../include
 PRIVATE
+    ./common/include
     ../third_party/eigen/
     ../third_party/ncnn/include
 )

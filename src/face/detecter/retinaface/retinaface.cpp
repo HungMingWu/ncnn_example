@@ -1,6 +1,7 @@
 #include "retinaface.h"
 #include <iostream>
 #include <assert.h>
+#include <common/common.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -48,7 +49,7 @@ int RetinaFace::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> RetinaFace::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
 	std::cout << "start face detect." << std::endl;
 	assert(initialized_);
 	assert(img_src.data);
@@ -61,7 +62,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 		ncnn::Mat::PIXEL_BGR2RGB, img_width, img_height, inputSize_.width, inputSize_.height);
 	ex.input("data", in);
 	
-	std::vector<FaceInfo> faces_tmp;
+	std::vector<orbwebai::face::Info> faces_tmp;
 	for (int i = 0; i < 3; ++i) {
 		std::string class_layer_name = "face_rpn_cls_prob_reshape_stride" + std::to_string(RPNs_[i]);
 		std::string bbox_layer_name = "face_rpn_bbox_pred_stride" + std::to_string(RPNs_[i]);
@@ -85,7 +86,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 						continue;
 					}
 					// 1.获取anchor生成的box
-					mirror::Rect box(w * RPNs_[i] + anchors[a].x,
+					orbwebai::Rect box(w * RPNs_[i] + anchors[a].x,
 						h * RPNs_[i] + anchors[a].y,
 						anchors[a].width,
 						anchors[a].height);
@@ -97,7 +98,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 					float delta_h = bbox_mat.channel(a * 4 + 3)[index];
 
 					// 3.计算anchor box的中心
-					mirror::Point2f center(box.x + box.width * 0.5f,
+					orbwebai::Point2f center(box.x + box.width * 0.5f,
 						box.y + box.height * 0.5f);
 					
 					// 4.计算框的实际中心（anchor的中心+偏移量）
@@ -109,14 +110,14 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 					float curr_height = std::exp(delta_h) * (box.height + 1);
 
 					// 6.获取实际的矩形位置
-					mirror::Rect curr_box(center.x - curr_width * 0.5f,
+					orbwebai::Rect curr_box(center.x - curr_width * 0.5f,
 						center.y - curr_height * 0.5f, curr_width, 	curr_height);
 					curr_box.x = std::max<int>(curr_box.x * factor_x, 0);
 					curr_box.y = std::max<int>(curr_box.y * factor_y, 0);
 					curr_box.width = std::min<int>(img_width - curr_box.x, curr_box.width * factor_x);
 					curr_box.height = std::min<int>(img_height - curr_box.y, curr_box.height * factor_y);
 					
-					FaceInfo face_info;
+					orbwebai::face::Info face_info;
 
 					int offset_index = landmark_mat.c / anchor_num;
 					for (int k = 0; k < 5; ++k) {
@@ -134,7 +135,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 		}
 	}
 	
-	std::vector<FaceInfo> faces = NMS(faces_tmp, iouThreshold_);
+	std::vector<orbwebai::face::Info> faces = NMS(faces_tmp, iouThreshold_);
 	std::cout << faces.size() << " faces detected." << std::endl;
 
 	std::cout << "end face detect." << std::endl;

@@ -1,6 +1,7 @@
 #ifndef _CLASSIFIER_MOBILENET_H_
 #define _CLASSIFIER_MOBILENET_H_
 
+#include <orbwebai/structure.h>
 #include "../classifier.h"
 #include "ncnn/net.h"
 
@@ -11,7 +12,7 @@ public:
 	Mobilenet();
 	~Mobilenet();
 	int LoadModel(const char* root_path);
-	std::vector<ImageInfo> Classify(const mirror::ImageMetaInfo& img_src) override;
+	std::vector<orbwebai::classify::Info> Classify(const orbwebai::ImageMetaInfo& img_src) override;
 
 private:
 	bool initialized_;
@@ -19,7 +20,7 @@ private:
 	std::vector<std::string> labels_;
 	const float meanVals[3] = { 103.94f, 116.78f, 123.68f };
 	const float normVals[3] = { 0.017f,  0.017f,  0.017f };
-	const mirror::Size inputSize = {224, 224};
+	const orbwebai::Size inputSize = {224, 224};
 
 	int LoadLabels(const char* root_path);
 

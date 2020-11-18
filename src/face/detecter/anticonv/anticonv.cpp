@@ -1,6 +1,7 @@
 #include "anticonv.h"
 #include <assert.h>
 #include <iostream>
+#include <common/common.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -52,7 +53,7 @@ int AntiConv::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> AntiConv::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
 	std::cout << "start face detect." << std::endl;
 	assert(initialized_);
 	assert(img_src.data);
@@ -65,7 +66,7 @@ std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src)
 		ncnn::Mat::PIXEL_BGR2RGB, img_width, img_height, inputSize_.width, inputSize_.height);
 	ex.input("data", in);
 
-	std::vector<FaceInfo> faces_tmp;
+	std::vector<orbwebai::face::Info> faces_tmp;
 	for (int i = 0; i < 3; ++i) {
         std::string class_layer_name = "face_rpn_cls_prob_reshape_stride" + std::to_string(RPNs_[i]);
 		std::string bbox_layer_name = "face_rpn_bbox_pred_stride" + std::to_string(RPNs_[i]);
@@ -91,7 +92,7 @@ std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src)
 						continue;
 					}
 					float prob = type_mat.channel(2 * anchor_num + a)[index];
-					mirror::Rect box(w * RPNs_[i] + anchors[a].x,
+					orbwebai::Rect box(w * RPNs_[i] + anchors[a].x,
 						h * RPNs_[i] + anchors[a].y,
 						anchors[a].width,
 						anchors[a].height);
@@ -100,20 +101,19 @@ std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src)
 					float delta_y = bbox_mat.channel(a * 4 + 1)[index];
 					float delta_w = bbox_mat.channel(a * 4 + 2)[index];
 					float delta_h = bbox_mat.channel(a * 4 + 3)[index];
-					mirror::Point2f center(box.x + box.width * 0.5f, box.y + box.height * 0.5f);
+					orbwebai::Point2f center(box.x + box.width * 0.5f, box.y + box.height * 0.5f);
 					center.x = center.x + delta_x * box.width;
 					center.y = center.y + delta_y * box.height;
 					float curr_width = std::exp(delta_w) * (box.width + 1);
 					float curr_height = std::exp(delta_h) * (box.height + 1);
-					mirror::Rect curr_box(center.x - curr_width * 0.5f,
+					orbwebai::Rect curr_box(center.x - curr_width * 0.5f,
 						center.y - curr_height * 0.5f, curr_width, 	curr_height);
 					curr_box.x = std::max<int>(curr_box.x * factor_x, 0);
 					curr_box.y = std::max<int>(curr_box.y * factor_y, 0);
 					curr_box.width = std::min<int>(img_width - curr_box.x, curr_box.width * factor_x);
 					curr_box.height = std::min<int>(img_height - curr_box.y, curr_box.height * factor_y);
 
-					FaceInfo face_info;
-					memset(&face_info, 0, sizeof(face_info));
+					orbwebai::face::Info face_info;
 					face_info.score_ = score;
 					face_info.mask_ = (prob > maskThreshold_);
 					face_info.location_ = curr_box;
@@ -123,7 +123,7 @@ std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src)
 		}
 	}
 	
-	std::vector<FaceInfo> faces = NMS(faces_tmp, iouThreshold_);
+	std::vector<orbwebai::face::Info> faces = NMS(faces_tmp, iouThreshold_);
 	std::cout << faces.size() << " faces detected." << std::endl;
 
 	std::cout << "end face detect." << std::endl;

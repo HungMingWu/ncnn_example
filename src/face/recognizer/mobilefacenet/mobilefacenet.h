@@ -13,7 +13,7 @@ public:
 	~Mobilefacenet();
 
 	int LoadModel(const char* root_path);
-	std::vector<float> ExtractFeature(const mirror::ImageMetaInfo& img_face) override;
+	std::vector<float> ExtractFeature(const orbwebai::ImageMetaInfo& img_face) override;
 
 private:
 	ncnn::Net mobileface_net_;

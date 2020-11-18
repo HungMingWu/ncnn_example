@@ -1,8 +1,8 @@
-#include "zqlandmarker.h"
+#include <assert.h>
 #include <iostream>
 #include <string>
-#include "../../common/common.h"
-#include <assert.h>
+#include <common/common.h>
+#include "zqlandmarker.h"
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -37,12 +37,12 @@ int ZQLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<mirror::Point2f> ZQLandmarker::ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
-	const mirror::Rect & face) {
+std::vector<orbwebai::Point2f> ZQLandmarker::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+	const orbwebai::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
 	assert(initialized);
 	assert(img_src.data);
-	std::vector<mirror::Point2f> keypoints;
+	std::vector<orbwebai::Point2f> keypoints;
 	auto crop_image = CopyImageFromRange(img_src, face);
 	ncnn::Extractor ex = zq_landmarker_net_->create_extractor();
 	ncnn::Mat in = ncnn::Mat::from_pixels_resize(crop_image.data(),

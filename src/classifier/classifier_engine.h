@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "../common/common.h"
+#include <orbwebai/structure.h>
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(_WIN64)
     #ifdef CLASSIFIER_EXPORTS
@@ -22,7 +22,7 @@ public:
 	CLASSIFIER_API ClassifierEngine();
 	CLASSIFIER_API ~ClassifierEngine();
 	CLASSIFIER_API int LoadModel(const char* root_path);
-	CLASSIFIER_API std::vector<ImageInfo> Classify(const mirror::ImageMetaInfo& img_src);
+	CLASSIFIER_API std::vector<orbwebai::classify::Info> Classify(const orbwebai::ImageMetaInfo& img_src);
 
 private:
 	class Impl;

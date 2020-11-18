@@ -23,7 +23,7 @@ public:
 		return 0;
 	}
 
-	inline std::vector<ObjectInfo> DetectObject(const mirror::ImageMetaInfo& img_src) {
+	inline std::vector<orbwebai::object::Info>  DetectObject(const orbwebai::ImageMetaInfo& img_src) {
 		return object_detecter_->DetectObject(img_src);
 	}
 
@@ -50,7 +50,7 @@ int ObjectEngine::LoadModel(const char * root_path) {
 	return impl_->LoadModel(root_path);
 }
 
-std::vector<ObjectInfo> ObjectEngine::DetectObject(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::object::Info> ObjectEngine::DetectObject(const orbwebai::ImageMetaInfo& img_src) {
 	return impl_->DetectObject(img_src);
 }
 

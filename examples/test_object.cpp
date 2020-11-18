@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 	object_engine->LoadModel(model_root_path);
 
 	double start = static_cast<double>(cv::getTickCount());
-	std::vector<mirror::ObjectInfo> objects = object_engine->DetectObject(toImageInfo(img_src));
+	auto objects = object_engine->DetectObject(toImageInfo(img_src));
 
 	int num_objects = static_cast<int>(objects.size());
 	for (int i = 0; i < num_objects; ++i) {

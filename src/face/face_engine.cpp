@@ -72,21 +72,22 @@ public:
 
         return 0;
     }
-    inline std::vector<TrackedFaceInfo> Track(const std::vector<FaceInfo>& curr_faces) {
+    inline std::vector<orbwebai::face::TrackedInfo> Track(
+        const std::vector<orbwebai::face::Info>& curr_faces) {
         return tracker_->Track(curr_faces);
     }
-    inline std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) {
+    inline std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src) {
         return detecter_->DetectFace(img_src);
     }
-    inline std::vector<mirror::Point2f> ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
-		const mirror::Rect& face) {
+    inline std::vector<orbwebai::Point2f> ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+		const orbwebai::Rect& face) {
         return landmarker_->ExtractKeypoints(img_src, face);
     }
-    inline int AlignFace(const mirror::ImageMetaInfo& img_src, const std::vector<mirror::Point2f>& keypoints,
-        mirror::ImageMetaInfo* p) {
+    inline int AlignFace(const orbwebai::ImageMetaInfo& img_src, const std::vector<orbwebai::Point2f>& keypoints,
+        orbwebai::ImageMetaInfo* p) {
         return aligner_->AlignFace(img_src, keypoints, p);
     }
-    inline std::vector<float> ExtractFeature(const mirror::ImageMetaInfo& img_face) {
+    inline std::vector<float> ExtractFeature(const orbwebai::ImageMetaInfo& img_face) {
         return recognizer_->ExtractFeature(img_face);
     }
 
@@ -96,7 +97,7 @@ public:
     inline int Delete(const std::string& name) {
         return database_->Delete(name);
     }
-	inline int64_t QueryTop(const std::vector<float>& feat, QueryResult *query_result = nullptr) {
+	inline int64_t QueryTop(const std::vector<float>& feat, orbwebai::query::Result*query_result = nullptr) {
         return database_->QueryTop(feat, query_result);
     }
     inline int Save() {
@@ -132,25 +133,26 @@ int FaceEngine::LoadModel(const char* root_path) {
     return impl_->LoadModel(root_path);
 }
 
-std::vector<TrackedFaceInfo> FaceEngine::Track(const std::vector<FaceInfo>& curr_faces) {
+std::vector<orbwebai::face::TrackedInfo> FaceEngine::Track(
+    const std::vector<orbwebai::face::Info >& curr_faces) {
 	return impl_->Track(curr_faces);
 }
 
-std::vector<FaceInfo> FaceEngine::DetectFace(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> FaceEngine::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
     return impl_->DetectFace(img_src);
 }
 
-std::vector<mirror::Point2f> FaceEngine::ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
-	const mirror::Rect& face) {
+std::vector<orbwebai::Point2f> FaceEngine::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+	const orbwebai::Rect& face) {
     return impl_->ExtractKeypoints(img_src, face);
 }
 
-int FaceEngine::AlignFace(const mirror::ImageMetaInfo& img_src, const std::vector<mirror::Point2f>& keypoints,
-    mirror::ImageMetaInfo* p) {
+int FaceEngine::AlignFace(const orbwebai::ImageMetaInfo& img_src, const std::vector<orbwebai::Point2f>& keypoints,
+    orbwebai::ImageMetaInfo* p) {
     return impl_->AlignFace(img_src, keypoints, p);
 }
 
-std::vector<float> FaceEngine::ExtractFeature(const mirror::ImageMetaInfo& img_face) {
+std::vector<float> FaceEngine::ExtractFeature(const orbwebai::ImageMetaInfo& img_face) {
     return impl_->ExtractFeature(img_face);
 }
 
@@ -163,7 +165,7 @@ int FaceEngine::Delete(const std::string& name) {
 }
 
 int64_t FaceEngine::QueryTop(const std::vector<float>& feat,
-    QueryResult* query_result) {
+    orbwebai::query::Result* query_result) {
     return impl_->QueryTop(feat, query_result);
 }
 

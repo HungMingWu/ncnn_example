@@ -14,10 +14,10 @@ int TestLandmark(int argc, char* argv[]) {
 	
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
+	auto faces = face_engine->DetectFace(toImageInfo(img_src));
 	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
-		mirror::Rect face = faces.at(i).location_;
-		std::vector<mirror::Point2f> keypoints = face_engine->ExtractKeypoints(toImageInfo(img_src), face);
+		orbwebai::Rect face = faces.at(i).location_;
+		std::vector<orbwebai::Point2f> keypoints = face_engine->ExtractKeypoints(toImageInfo(img_src), face);
 		for (int j = 0; j < static_cast<int>(keypoints.size()); ++j) {
 			cv::circle(img_src, toPoint(keypoints[j]), 1, cv::Scalar(0, 0, 255), 1);
 		}
@@ -46,20 +46,20 @@ int TestRecognize(int argc, char* argv[]) {
 	double start = static_cast<double>(cv::getTickCount());
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
+	auto faces = face_engine->DetectFace(toImageInfo(img_src));
 
 	cv::Mat face1 = img_src(toRect(faces[0].location_)).clone();
 	cv::Mat face2 = img_src(toRect(faces[1].location_)).clone();
 	std::vector<float> feature1 = face_engine->ExtractFeature(toImageInfo(face1));
 	std::vector<float> feature2 = face_engine->ExtractFeature(toImageInfo(face2));
-	float sim = CalculateSimilarity(feature1, feature2);
+	float sim = orbwebai::CalculateSimilarity(feature1, feature2);
 
 	double end = static_cast<double>(cv::getTickCount());
 	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
 	std::cout << "time cost: " << time_cost << "ms" << std::endl;
 
 	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
-		mirror::Rect face = faces.at(i).location_;
+		orbwebai::Rect face = faces.at(i).location_;
 		cv::rectangle(img_src, toRect(face), cv::Scalar(0, 255, 0), 2);
 	}
 	cv::imwrite("../../data/images/face1.jpg", face1);
@@ -82,18 +82,18 @@ int TestAlignFace(int argc, char* argv[]) {
 	
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
-	std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
+	auto faces = face_engine->DetectFace(toImageInfo(img_src));
 	constexpr int alignWidth = 112;
 	constexpr int alignHeight = 112;
 	constexpr int alignChannel = 3;
-	mirror::ImageMetaInfo face_aligned;
+	orbwebai::ImageMetaInfo face_aligned;
 	face_aligned.width = alignWidth;
 	face_aligned.height = alignHeight;
 	face_aligned.channels = alignChannel;
 	face_aligned.data = new unsigned char[alignWidth * alignHeight * alignChannel];
 	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
-		mirror::Rect face = faces.at(i).location_;
-		std::vector<mirror::Point2f> keypoints = face_engine->ExtractKeypoints(toImageInfo(img_src), face);
+		auto face = faces.at(i).location_;
+		std::vector<orbwebai::Point2f> keypoints = face_engine->ExtractKeypoints(toImageInfo(img_src), face);
 
 		face_engine->AlignFace(toImageInfo(img_src), keypoints, &face_aligned);
 		cv::Mat extract_image(112, 112, CV_8UC3, face_aligned.data);
@@ -133,11 +133,11 @@ int TestTrack(int argc, char* argv[]) {
 		if (frame.empty()) {
 			continue;
 		}
-		std::vector<FaceInfo> curr_faces = face_engine->DetectFace(toImageInfo(frame));
-		std::vector<TrackedFaceInfo> faces = face_engine->Track(curr_faces);
+		auto curr_faces = face_engine->DetectFace(toImageInfo(frame));
+		auto faces = face_engine->Track(curr_faces);
 
 		for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
-			TrackedFaceInfo tracked_face_info = faces.at(i);
+			auto tracked_face_info = faces.at(i);
 			cv::rectangle(frame, toRect(tracked_face_info.face_info_.location_), cv::Scalar(0, 255, 0), 2);
 		}
 
@@ -165,12 +165,12 @@ int TestDatabase(int argc, char* argv[]) {
     FaceEngine* face_engine = new FaceEngine();
     face_engine->LoadModel(root_path);
     face_engine->Load();
-    std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
+    auto faces = face_engine->DetectFace(toImageInfo(img_src));
 
     int faces_num = static_cast<int>(faces.size());
     std::cout << "faces number: " << faces_num << std::endl;
     for (int i = 0; i < faces_num; ++i) {
-        mirror::Rect face = faces.at(i).location_;
+		auto face = faces.at(i).location_;
 		cv::rectangle(img_src, toRect(face), cv::Scalar(0, 255, 0), 2);
 		cv::Mat img_cpy = img_src(toRect(face)).clone();
         std::vector<float> feat = face_engine->ExtractFeature(toImageInfo(img_cpy));
@@ -204,7 +204,7 @@ int TestMask(int argc, char* argv[]) {
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
 	double start = static_cast<double>(cv::getTickCount());
-	std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
+	auto faces = face_engine->DetectFace(toImageInfo(img_src));
 	double end = static_cast<double>(cv::getTickCount());
 	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
 	std::cout << "time cost: " << time_cost << "ms" << std::endl;

@@ -1,12 +1,13 @@
-#include "aligner.h"
 #include <iostream>
 #include <Eigen/Geometry>
+#include <orbwebai/structure.h>
+#include "aligner.h"
 
 namespace mirror {
 class Aligner::Impl {
 public:
-	int AlignFace(const mirror::ImageMetaInfo& img_src,
-		const std::vector<mirror::Point2f>& keypoints, mirror::ImageMetaInfo*);
+	int AlignFace(const orbwebai::ImageMetaInfo& img_src,
+		const std::vector<orbwebai::Point2f>& keypoints, orbwebai::ImageMetaInfo*);
 
 private:
 	float points_dst[5][2] = {
@@ -29,13 +30,13 @@ Aligner::~Aligner() {
 	}
 }
 
-int Aligner::AlignFace(const mirror::ImageMetaInfo& img_src,
-	const std::vector<mirror::Point2f>& keypoints, mirror::ImageMetaInfo*p) {
+int Aligner::AlignFace(const orbwebai::ImageMetaInfo& img_src,
+	const std::vector<orbwebai::Point2f>& keypoints, orbwebai::ImageMetaInfo*p) {
 	return impl_->AlignFace(img_src, keypoints, p);
 }
 
-int Aligner::Impl::AlignFace(const mirror::ImageMetaInfo& img_src,
-	const std::vector<mirror::Point2f>& keypoints, mirror::ImageMetaInfo*p) {
+int Aligner::Impl::AlignFace(const orbwebai::ImageMetaInfo& img_src,
+	const std::vector<orbwebai::Point2f>& keypoints, orbwebai::ImageMetaInfo*p) {
 	std::cout << "start align face." << std::endl;
 	assert(img_src.data);
 	assert(keypoints.size() > 0);

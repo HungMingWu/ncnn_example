@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <common/common.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -35,7 +36,7 @@ int Mobilefacenet::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<float> Mobilefacenet::ExtractFeature(const mirror::ImageMetaInfo& img_face) {
+std::vector<float> Mobilefacenet::ExtractFeature(const orbwebai::ImageMetaInfo& img_face) {
 	std::cout << "start extract feature." << std::endl;
 	assert(initialized_);
 	assert(img_face.data);
@@ -45,8 +46,8 @@ std::vector<float> Mobilefacenet::ExtractFeature(const mirror::ImageMetaInfo& im
 	ex.input("data", in);
 	ncnn::Mat out;
 	ex.extract("fc1", out);
-	std::vector<float> features(kFaceFeatureDim);
-	for (int i = 0; i < kFaceFeatureDim; ++i) {
+	std::vector<float> features(orbwebai::kFaceFeatureDim);
+	for (size_t i = 0; i < orbwebai::kFaceFeatureDim; ++i) {
 		features[i] = out[i];
 	}
 

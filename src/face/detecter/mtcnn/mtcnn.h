@@ -1,6 +1,7 @@
 #ifndef _FACE_MTCNN_H_
 #define _FACE_MTCNN_H_
 
+#include <orbwebai/structure.h>
 #include "../detecter.h"
 #include <vector>
 #include "ncnn/net.h"
@@ -11,7 +12,7 @@ public:
 	Mtcnn();
 	~Mtcnn();
 	int LoadModel(const char* root_path);
-	std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) override;
+	std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src) override;
 
 private:
 	ncnn::Net* pnet_ = nullptr;
@@ -27,12 +28,13 @@ private:
 	const float threshold_[3] = { 0.8f, 0.8f, 0.6f };
 
 private:
-	std::vector<FaceInfo> PDetect(const ncnn::Mat& img_in);
-	std::vector<FaceInfo> RDetect(const ncnn::Mat& img_in, const std::vector<FaceInfo>& first_bboxes);
-	std::vector<FaceInfo> ODetect(const ncnn::Mat& img_in,
-		const std::vector<FaceInfo>& second_bboxes);
+	std::vector<orbwebai::face::Info> PDetect(const ncnn::Mat& img_in);
+	std::vector<orbwebai::face::Info> RDetect(const ncnn::Mat& img_in, 
+		const std::vector<orbwebai::face::Info>& first_bboxes);
+	std::vector<orbwebai::face::Info> ODetect(const ncnn::Mat& img_in,
+		const std::vector<orbwebai::face::Info>& second_bboxes);
 
-	int Refine(std::vector<FaceInfo>& bboxes, const mirror::Size max_size);
+	int Refine(std::vector<orbwebai::face::Info>& bboxes, const orbwebai::Size max_size);
 };
 
 }

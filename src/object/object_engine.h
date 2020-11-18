@@ -2,7 +2,7 @@
 #define _OBJECT_DETECTOR_H_
 
 #include <vector>
-#include "../common/common.h"
+#include <orbwebai/structure.h>
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(_WIN64)
     #ifdef OBJECT_EXPORTS
@@ -22,7 +22,7 @@ public:
 	OBJECT_API ~ObjectEngine();
 
 	OBJECT_API int LoadModel(const char* root_path);
-	OBJECT_API std::vector<ObjectInfo> DetectObject(const mirror::ImageMetaInfo& img_src);
+	OBJECT_API std::vector<orbwebai::object::Info> DetectObject(const orbwebai::ImageMetaInfo& img_src);
 
 private:
 	class Impl;

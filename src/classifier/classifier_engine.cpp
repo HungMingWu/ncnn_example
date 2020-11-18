@@ -16,7 +16,7 @@ public:
 		}
 	}
 	int LoadModel(const char* root_path);
-	std::vector<ImageInfo> Classify(const mirror::ImageMetaInfo& img_src);
+	std::vector<orbwebai::classify::Info> Classify(const orbwebai::ImageMetaInfo& img_src);
 
 private:
 	Classifier* classifier_;
@@ -38,7 +38,7 @@ int ClassifierEngine::LoadModel(const char * root_path) {
 	return impl_->LoadModel(root_path);
 }
 
-std::vector<ImageInfo> ClassifierEngine::Classify(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::classify::Info> ClassifierEngine::Classify(const orbwebai::ImageMetaInfo& img_src) {
 	return impl_->Classify(img_src);
 }
 
@@ -48,7 +48,7 @@ int ClassifierEngine::Impl::LoadModel(const char * root_path) {
 	return classifier_->LoadModel(root_path);
 }
 
-std::vector<ImageInfo> ClassifierEngine::Impl::Classify(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::classify::Info> ClassifierEngine::Impl::Classify(const orbwebai::ImageMetaInfo& img_src) {
 	return classifier_->Classify(img_src);
 }
 

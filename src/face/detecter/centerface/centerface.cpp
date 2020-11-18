@@ -1,6 +1,7 @@
-#include "centerface.h"
 #include <assert.h>
 #include <iostream>
+#include <common/common.h>
+#include "centerface.h"
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -40,7 +41,7 @@ int CenterFace::LoadModel(const char* root_path) {
     return 0;
 }
 
-std::vector<FaceInfo> CenterFace::DetectFace(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> CenterFace::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
     std::cout << "start detect." << std::endl;
     assert(initialized_);
     assert(img_src.data);
@@ -64,7 +65,7 @@ std::vector<FaceInfo> CenterFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 
     int height = mat_heatmap.h;
 	int width = mat_heatmap.w;
-    std::vector<FaceInfo> faces_tmp;
+    std::vector<orbwebai::face::Info> faces_tmp;
 	for (int h = 0; h < height; ++h) {
 		for (int w = 0; w < width; ++w) {
 			int index = h * width + w;
@@ -82,7 +83,7 @@ std::vector<FaceInfo> CenterFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 			float ymax = std::min<float>(ymin + s0, img_height_new);
 			float xmax = std::min<float>(xmin + s1, img_width_new);
 
-            FaceInfo face_info;
+            orbwebai::face::Info face_info;
             face_info.score_ = score;
             face_info.location_.x = scale_x * xmin;
             face_info.location_.y = scale_y * ymin;

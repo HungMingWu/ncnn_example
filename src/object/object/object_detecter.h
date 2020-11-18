@@ -2,14 +2,14 @@
 #define _OBJECT_DETECTER_H_
 
 #include <vector>
-#include "../object_engine.h"
+#include <orbwebai/structure.h>
 
 namespace mirror {
 class ObjectDetecter {
 public:
 	virtual ~ObjectDetecter() {}
 	virtual int LoadModel(const char* root_path) = 0;
-	virtual std::vector<ObjectInfo> DetectObject(const mirror::ImageMetaInfo& img_src) = 0;
+	virtual std::vector<orbwebai::object::Info> DetectObject(const orbwebai::ImageMetaInfo& img_src) = 0;
 };
 
 }

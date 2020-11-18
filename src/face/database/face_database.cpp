@@ -1,6 +1,7 @@
 #include <math.h>
 #include "face_database.h"
 #include <iostream>
+#include <common/common.h>
 
 namespace mirror {
 
@@ -17,7 +18,7 @@ public:
 	
 	bool Save(StreamWriter& writer) const {
 		const uint64_t num_faces = db_.size();
-		const uint64_t dim_feat = kFaceFeatureDim;
+		const uint64_t dim_feat = orbwebai::kFaceFeatureDim;
 		const uint64_t dim_name = kFaceNameDim;
 
 		Write(writer, num_faces);
@@ -39,7 +40,7 @@ public:
 
 	bool Load(StreamReader& reader) {
 		uint64_t num_faces = 0;
-		const uint64_t dim_feat = kFaceFeatureDim;
+		const uint64_t dim_feat = orbwebai::kFaceFeatureDim;
 		const uint64_t dim_name = kFaceNameDim;
 
 		Read(reader, num_faces);
@@ -53,7 +54,7 @@ public:
 			Read(reader, name_arr, size_t(dim_name));
 			std::cout << "name is: " << name_arr << std::endl;
 
-			std::vector<float> feat(kFaceFeatureDim);
+			std::vector<float> feat(orbwebai::kFaceFeatureDim);
 			Read(reader, &feat[0], size_t(dim_feat));
 
 			db_.insert(std::make_pair(std::string(name_arr), feat));
@@ -95,7 +96,7 @@ public:
 		double dot = 0;
 		double norm1 = 0;
 		double norm2 = 0;
-		for (size_t i = 0; i < kFaceFeatureDim; ++i) {
+		for (size_t i = 0; i < orbwebai::kFaceFeatureDim; ++i) {
 			dot += feat1[i] * feat2[i];
 			norm1 += feat1[i] * feat1[i];
 			norm2 += feat2[i] * feat2[i];
@@ -112,7 +113,7 @@ public:
 	}
 
 	size_t QueryTop(const std::vector<float>& feat,
-		QueryResult *query_result) {
+		orbwebai::query::Result*query_result) {
 		std::vector<std::pair<std::string, float>> result(db_.size()); {
 			size_t i = 0;
 			for (auto &line : db_) {
@@ -179,7 +180,7 @@ int FaceDatabase::Delete(const std::string& name) {
 }
 
 int64_t FaceDatabase::QueryTop(const std::vector<float>& feat,
-	QueryResult* query_result) {
+	orbwebai::query::Result* query_result) {
 	return impl_->QueryTop(feat, query_result);
 }
 

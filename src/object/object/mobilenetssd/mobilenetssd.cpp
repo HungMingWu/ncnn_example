@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <common/common.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"
@@ -42,7 +43,7 @@ int MobilenetSSD::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<ObjectInfo> MobilenetSSD::DetectObject(const mirror::ImageMetaInfo& img_src) {
+std::vector<orbwebai::object::Info> MobilenetSSD::DetectObject(const orbwebai::ImageMetaInfo& img_src) {
 	std::cout << "start object detect." << std::endl;
 	assert(initialized_);
 	assert(img_src.data);
@@ -58,10 +59,10 @@ std::vector<ObjectInfo> MobilenetSSD::DetectObject(const mirror::ImageMetaInfo& 
 	ncnn::Mat out;
 	ex.extract("detection_out", out);
 
-	std::vector<ObjectInfo> objects_tmp;
+	std::vector<orbwebai::object::Info> objects_tmp;
 	for (int i = 0; i < out.h; i++) {
 		const float* values = out.row(i);
-		ObjectInfo object;
+		orbwebai::object::Info object;
 		object.name_ = class_names[int(values[0])];
 		object.score_ = values[1];
 		object.location_.x = values[2] * width;
@@ -75,7 +76,7 @@ std::vector<ObjectInfo> MobilenetSSD::DetectObject(const mirror::ImageMetaInfo& 
 		}
 		objects_tmp.push_back(object);
 	}
-	std::vector<ObjectInfo> objects = NMS(objects_tmp, nmsThreshold_);
+	auto objects = NMS(objects_tmp, nmsThreshold_);
 	std::cout << "objects number: " << objects.size() << std::endl;
 	std::cout << "end object detect." << std::endl;
 	return objects;

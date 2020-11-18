@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 	mirror::ClassifierEngine* classifier_engine = new mirror::ClassifierEngine();
 
 	classifier_engine->LoadModel(root_path);
-	std::vector<mirror::ImageInfo> images = classifier_engine->Classify(toImageInfo(img_src));
+	auto images = classifier_engine->Classify(toImageInfo(img_src));
 
 	int topk = images.size();
 	for (int i = 0; i < topk; ++i) {

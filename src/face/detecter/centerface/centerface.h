@@ -11,7 +11,7 @@ public:
     CenterFace();
     ~CenterFace();
 	int LoadModel(const char* root_path);
-    std::vector<FaceInfo> DetectFace(const mirror::ImageMetaInfo& img_src) override;
+    std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src) override;
 
 private:
     ncnn::Net* centernet_ = nullptr;

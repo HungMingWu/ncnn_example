@@ -11,8 +11,8 @@ public:
 	~InsightfaceLandmarker();
 
 	int LoadModel(const char* root_path);
-	std::vector<mirror::Point2f> ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
-		const mirror::Rect& face) override;
+	std::vector<orbwebai::Point2f> ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+		const orbwebai::Rect& face) override;
 
 private:
 	ncnn::Net insightface_landmarker_net_;

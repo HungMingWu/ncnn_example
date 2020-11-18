@@ -1,12 +1,38 @@
-#include "insightface.h"
+#include <assert.h>
+#include <algorithm>
 #include <iostream>
 #include <string>
-#include "../../common/common.h"
-#include <assert.h>
+#include <orbwebai/structure_operator.h>
+#include <common/common.h>
+
+#include "insightface.h"
 
 #if MIRROR_VULKAN
 #include "gpu.h"
 #endif // MIRROR_VULKAN
+
+namespace {
+	void EnlargeRect(const float& scale, orbwebai::Rect* rect) {
+		float offset_x = (scale - 1.f) / 2.f * rect->width;
+		float offset_y = (scale - 1.f) / 2.f * rect->height;
+		rect->x -= offset_x;
+		rect->y -= offset_y;
+		rect->width = scale * rect->width;
+		rect->height = scale * rect->height;
+	}
+
+	void RectifyRect(orbwebai::Rect* rect) 
+	{
+		int max_side = std::max<int>(rect->width, rect->height);
+		int offset_x = (max_side - rect->width) / 2;
+		int offset_y = (max_side - rect->height) / 2;
+
+		rect->x -= offset_x;
+		rect->y -= offset_y;
+		rect->width = max_side;
+		rect->height = max_side;
+	}
+}
 
 namespace mirror {
 InsightfaceLandmarker::InsightfaceLandmarker() {
@@ -35,20 +61,20 @@ int InsightfaceLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<mirror::Point2f> InsightfaceLandmarker::ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
-	const mirror::Rect & face) {
+std::vector<orbwebai::Point2f> InsightfaceLandmarker::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+	const orbwebai::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
 	assert(initialized);
 	assert(img_src.data);
-	std::vector<mirror::Point2f> keypoints;
+	std::vector<orbwebai::Point2f> keypoints;
 	// 1 enlarge the face rect
-	mirror::Rect face_enlarged = face;
+	orbwebai::Rect face_enlarged = face;
 	const float enlarge_scale = 1.5f;
 	EnlargeRect(enlarge_scale, &face_enlarged);
 
 	// 2 square the rect
 	RectifyRect(&face_enlarged);
-	face_enlarged = face_enlarged & mirror::Rect(0, 0, img_src.width, img_src.height);
+	face_enlarged = face_enlarged & orbwebai::Rect(0, 0, img_src.width, img_src.height);
 
 	// 3 crop the face
 	std::vector<uint8_t> img_face = CopyImageFromRange(img_src, face_enlarged);
