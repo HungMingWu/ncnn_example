@@ -161,7 +161,7 @@ int TestDatabase(int argc, char* argv[]) {
     }
 
     const char* root_path = "../../data/models";
-	auto faceDatabase = make_unique<orbwebai::face::Database>(std::string(root_path));
+	auto faceDatabase = make_unique<orbwebai::face::Database>(root_path);
 	faceDatabase->Load();
 	auto faceDetector = make_unique<orbwebai::face::Detector>();
 	faceDetector->LoadModel(root_path);

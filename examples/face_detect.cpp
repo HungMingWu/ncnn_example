@@ -1,10 +1,7 @@
 #define FACE_EXPORTS
 #include "opencv2/opencv.hpp"
-#include "face_engine.h"
 #include "image_helper.h"
 #include <orbwebai/face/detecter.h>
-
-using namespace mirror;
 
 int main(int argc, char* argv[]) {
 	const char* img_file = "../../../..//data/images/4.jpg";
