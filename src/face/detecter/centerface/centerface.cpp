@@ -77,10 +77,10 @@ std::vector<FaceInfo> CenterFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 			float o0 = mat_offset.channel(0)[index];
 			float o1 = mat_offset.channel(1)[index];
 
-			float ymin = MAX(0, 4 * (h + o0 + 0.5) - 0.5 * s0);
-			float xmin = MAX(0, 4 * (w + o1 + 0.5) - 0.5 * s1);
-			float ymax = MIN(ymin + s0, img_height_new);
-			float xmax = MIN(xmin + s1, img_width_new);
+			float ymin = std::max<float>(0, 4 * (h + o0 + 0.5) - 0.5 * s0);
+			float xmin = std::max<float>(0, 4 * (w + o1 + 0.5) - 0.5 * s1);
+			float ymax = std::min<float>(ymin + s0, img_height_new);
+			float xmax = std::min<float>(xmin + s1, img_width_new);
 
             FaceInfo face_info;
             face_info.score_ = score;

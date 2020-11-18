@@ -55,10 +55,10 @@ std::vector<mirror::Rect> GenerateAnchors(const int & base_size,
 }
 
 float InterRectArea(const mirror::Rect & a, const mirror::Rect & b) {
-	mirror::Point left_top(MAX(a.x, b.x), MAX(a.y, b.y));
-	mirror::Point right_bottom(MIN(a.br().x, b.br().x), MIN(a.br().y, b.br().y));
+	mirror::Point left_top(std::max(a.x, b.x), std::max(a.y, b.y));
+	mirror::Point right_bottom(std::min(a.br().x, b.br().x), std::min(a.br().y, b.br().y));
 	mirror::Point diff = right_bottom - left_top;
-	return (MAX(diff.x + 1, 0) * MAX(diff.y + 1, 0));
+	return (std::max(diff.x + 1, 0) * std::max(diff.y + 1, 0));
 }
 
 float ComputeIOU(const mirror::Rect & rect1,
@@ -69,7 +69,7 @@ float ComputeIOU(const mirror::Rect & rect1,
 		return inter_area / (rect1.area() + rect2.area() - inter_area);
 	}
 	else {
-		return inter_area / MIN(rect1.area(), rect2.area());
+		return inter_area / std::min(rect1.area(), rect2.area());
 	}
 }
 
@@ -102,7 +102,7 @@ void EnlargeRect(const float& scale, mirror::Rect* rect) {
 }
 
 void RectifyRect(mirror::Rect* rect) {
-        int max_side = MAX(rect->width, rect->height);
+        int max_side = std::max(rect->width, rect->height);
         int offset_x = (max_side - rect->width) / 2;
         int offset_y = (max_side - rect->height) / 2;
 

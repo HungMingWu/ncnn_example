@@ -1,7 +1,6 @@
 #ifndef _FACE_DETECTER_H_
 #define _FACE_DETECTER_H_
 
-#include "opencv2/core.hpp"
 #include "../common/common.h"
 
 namespace mirror {

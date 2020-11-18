@@ -74,22 +74,31 @@ int TestRecognize(int argc, char* argv[]) {
 }
 
 int TestAlignFace(int argc, char* argv[]) {
-	const char* img_file = "../..//data/images/4.jpg";
+	const char* img_file = "../../../..//data/images/4.jpg";
 	cv::Mat img_src = cv::imread(img_file);
-	const char* root_path = "../..//data/models";
+	const char* root_path = "../../../..//data/models";
 
 	double start = static_cast<double>(cv::getTickCount());
 	
 	FaceEngine* face_engine = new FaceEngine();
 	face_engine->LoadModel(root_path);
 	std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
+	constexpr int alignWidth = 112;
+	constexpr int alignHeight = 112;
+	constexpr int alignChannel = 3;
+	mirror::ImageMetaInfo face_aligned;
+	face_aligned.width = alignWidth;
+	face_aligned.height = alignHeight;
+	face_aligned.channels = alignChannel;
+	face_aligned.data = new unsigned char[alignWidth * alignHeight * alignChannel];
 	for (int i = 0; i < static_cast<int>(faces.size()); ++i) {
 		mirror::Rect face = faces.at(i).location_;
 		std::vector<mirror::Point2f> keypoints = face_engine->ExtractKeypoints(toImageInfo(img_src), face);
-		cv::Mat face_aligned;
-		face_engine->AlignFace(img_src, keypoints, &face_aligned);
+
+		face_engine->AlignFace(toImageInfo(img_src), keypoints, &face_aligned);
+		cv::Mat extract_image(112, 112, CV_8UC3, face_aligned.data);
 		std::string name = std::to_string(i) + ".jpg";
-		cv::imwrite(name.c_str(), face_aligned);
+		cv::imwrite(name.c_str(), extract_image);
 		for (int j = 0; j < static_cast<int>(keypoints.size()); ++j) {
 			cv::circle(img_src, toPoint(keypoints[j]), 1, cv::Scalar(0, 0, 255), 1);
 		}
@@ -98,6 +107,7 @@ int TestAlignFace(int argc, char* argv[]) {
 	cv::imshow("result", img_src);
 	cv::waitKey(0);
 
+	delete[] face_aligned.data;
 	delete face_engine;
 	face_engine = nullptr;
 	

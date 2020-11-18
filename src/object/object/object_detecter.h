@@ -2,7 +2,6 @@
 #define _OBJECT_DETECTER_H_
 
 #include <vector>
-#include "opencv2/core.hpp"
 #include "../object_engine.h"
 
 namespace mirror {

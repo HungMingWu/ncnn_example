@@ -1,12 +1,12 @@
 #include "aligner.h"
 #include <iostream>
-#include "opencv2/core.hpp"
-#include "opencv2/imgproc.hpp"
 #include <Eigen/Geometry>
+
 namespace mirror {
 class Aligner::Impl {
 public:
-	int AlignFace(const cv::Mat& img_src, const std::vector<mirror::Point2f>& keypoints, cv::Mat* face_aligned);
+	int AlignFace(const mirror::ImageMetaInfo& img_src,
+		const std::vector<mirror::Point2f>& keypoints, mirror::ImageMetaInfo*);
 
 private:
 	float points_dst[5][2] = {
@@ -29,22 +29,16 @@ Aligner::~Aligner() {
 	}
 }
 
-int Aligner::AlignFace(const cv::Mat & img_src,
-	const std::vector<mirror::Point2f>& keypoints, cv::Mat * face_aligned) {
-	return impl_->AlignFace(img_src, keypoints, face_aligned);
+int Aligner::AlignFace(const mirror::ImageMetaInfo& img_src,
+	const std::vector<mirror::Point2f>& keypoints, mirror::ImageMetaInfo*p) {
+	return impl_->AlignFace(img_src, keypoints, p);
 }
 
-int Aligner::Impl::AlignFace(const cv::Mat & img_src,
-	const std::vector<mirror::Point2f>& keypoints, cv::Mat * face_aligned) {
+int Aligner::Impl::AlignFace(const mirror::ImageMetaInfo& img_src,
+	const std::vector<mirror::Point2f>& keypoints, mirror::ImageMetaInfo*p) {
 	std::cout << "start align face." << std::endl;
-	if (img_src.empty()) {
-		std::cout << "input empty." << std::endl;
-		return 10001;
-	}
-	if (keypoints.size() == 0) {
-		std::cout << "keypoints empty." << std::endl;
-		return 10001;
-	}
+	assert(img_src.data);
+	assert(keypoints.size() > 0);
 
 	float points_src[5][2] = {
 		{keypoints[104].x, keypoints[104].y},
@@ -87,17 +81,21 @@ int Aligner::Impl::AlignFace(const cv::Mat & img_src,
 	umeyamaDest(0, 4) = points_dst[4][0];
 	umeyamaDest(1, 4) = points_dst[4][1];
 
-	auto trans = Eigen::umeyama(umeyamaSrc, umeyamaDest);
-	face_aligned->create(112, 112, CV_32FC3);
+	auto inverse_trans = Eigen::umeyama(umeyamaDest, umeyamaSrc);
 
-	cv::Mat transfer_mat(2, 3, CV_32FC1);
-	transfer_mat.at<float>(0, 0) = trans(0, 0);
-	transfer_mat.at<float>(0, 1) = trans(0, 1);
-	transfer_mat.at<float>(0, 2) = trans(0, 2);
-	transfer_mat.at<float>(1, 0) = trans(1, 0);
-	transfer_mat.at<float>(1, 1) = trans(1, 1);
-	transfer_mat.at<float>(1, 2) = trans(1, 2);
-	cv::warpAffine(img_src.clone(), *face_aligned, transfer_mat, cv::Size(112, 112), 1, 0, 0);
+	int channels = p->channels;
+	for (int dsty = 0; dsty < p->height; dsty++)
+		for (int dstx = 0; dstx < p->width; dstx++) {
+			int srcx = static_cast<int>(dstx * inverse_trans(0, 0) + dsty * inverse_trans(0, 1) + inverse_trans(0, 2));
+			int srcy = static_cast<int>(dstx * inverse_trans(1, 0) + dsty * inverse_trans(1, 1) + inverse_trans(1, 2));
+			if (srcx >= 0 && srcx < img_src.width && srcy >= 0 && srcy < img_src.height)
+			{
+				auto* src_ptr = &img_src.data[img_src.width * srcy * channels + srcx * channels];
+				auto* dst_ptr = &p->data[p->width * dsty * channels + dstx * channels];
+				for (int c = 0; c < channels; c++)
+					dst_ptr[c] = src_ptr[c];
+			}
+		}
 
 	std::cout << "end align face." << std::endl;
 	return 0;

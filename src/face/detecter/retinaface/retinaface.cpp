@@ -84,7 +84,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 						continue;
 					}
 					// 1.获取anchor生成的box
-					cv::Rect box = cv::Rect(w * RPNs_[i] + anchors[a].x,
+					mirror::Rect box(w * RPNs_[i] + anchors[a].x,
 						h * RPNs_[i] + anchors[a].y,
 						anchors[a].width,
 						anchors[a].height);
@@ -96,7 +96,7 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 					float delta_h = bbox_mat.channel(a * 4 + 3)[index];
 
 					// 3.计算anchor box的中心
-					cv::Point2f center = cv::Point2f(box.x + box.width * 0.5f,
+					mirror::Point2f center(box.x + box.width * 0.5f,
 						box.y + box.height * 0.5f);
 					
 					// 4.计算框的实际中心（anchor的中心+偏移量）
@@ -110,20 +110,19 @@ std::vector<FaceInfo> RetinaFace::DetectFace(const mirror::ImageMetaInfo& img_sr
 					// 6.获取实际的矩形位置
 					mirror::Rect curr_box(center.x - curr_width * 0.5f,
 						center.y - curr_height * 0.5f, curr_width, 	curr_height);
-					curr_box.x = MAX(curr_box.x * factor_x, 0);
-					curr_box.y = MAX(curr_box.y * factor_y, 0);
-					curr_box.width = MIN(img_width - curr_box.x, curr_box.width * factor_x);
-					curr_box.height = MIN(img_height - curr_box.y, curr_box.height * factor_y);
+					curr_box.x = std::max<int>(curr_box.x * factor_x, 0);
+					curr_box.y = std::max<int>(curr_box.y * factor_y, 0);
+					curr_box.width = std::min<int>(img_width - curr_box.x, curr_box.width * factor_x);
+					curr_box.height = std::min<int>(img_height - curr_box.y, curr_box.height * factor_y);
 					
 					FaceInfo face_info;
-					memset(&face_info, 0, sizeof(face_info));
-					
+
 					int offset_index = landmark_mat.c / anchor_num;
 					for (int k = 0; k < 5; ++k) {
 						float x = landmark_mat.channel(a * offset_index + 2 * k)[index] * box.width + center.x;
 						float y = landmark_mat.channel(a * offset_index + 2 * k + 1)[index] * box.height + center.y;
-						face_info.keypoints_[k] = MIN(MAX(x * factor_x, 0.0f), img_width - 1);
-						face_info.keypoints_[k + 5] = MIN(MAX(y * factor_y, 0.0f), img_height - 1);
+						face_info.keypoints_[k] = std::min<float>(std::max<float>(x * factor_x, 0.0f), img_width - 1);
+						face_info.keypoints_[k + 5] = std::min<float>(std::max<float>(y * factor_y, 0.0f), img_height - 1);
 					}
 
 					face_info.score_ = score;

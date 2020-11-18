@@ -2,7 +2,6 @@
 #define _FACE_RECOGNIZER_H_
 
 #include <vector>
-#include "opencv2/core.hpp"
 #include "../common/common.h"
 
 namespace mirror {

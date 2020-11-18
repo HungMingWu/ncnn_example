@@ -2,7 +2,6 @@
 #define _OBJECT_DETECTOR_H_
 
 #include <vector>
-#include "opencv2/core.hpp"
 #include "../common/common.h"
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(_WIN64)

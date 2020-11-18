@@ -3,7 +3,6 @@
 
 #include "../detecter.h"
 #include <vector>
-#include "opencv2/core.hpp"
 #include "ncnn/net.h"
 
 namespace mirror {
@@ -33,7 +32,7 @@ private:
 	std::vector<FaceInfo> ODetect(const ncnn::Mat& img_in,
 		const std::vector<FaceInfo>& second_bboxes);
 
-	int Refine(std::vector<FaceInfo>& bboxes, const cv::Size max_size);
+	int Refine(std::vector<FaceInfo>& bboxes, const mirror::Size max_size);
 };
 
 }

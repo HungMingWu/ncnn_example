@@ -90,7 +90,7 @@ std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src)
 						continue;
 					}
 					float prob = type_mat.channel(2 * anchor_num + a)[index];
-					cv::Rect box = cv::Rect(w * RPNs_[i] + anchors[a].x,
+					mirror::Rect box(w * RPNs_[i] + anchors[a].x,
 						h * RPNs_[i] + anchors[a].y,
 						anchors[a].width,
 						anchors[a].height);
@@ -99,18 +99,17 @@ std::vector<FaceInfo> AntiConv::DetectFace(const mirror::ImageMetaInfo& img_src)
 					float delta_y = bbox_mat.channel(a * 4 + 1)[index];
 					float delta_w = bbox_mat.channel(a * 4 + 2)[index];
 					float delta_h = bbox_mat.channel(a * 4 + 3)[index];
-					cv::Point2f center = cv::Point2f(box.x + box.width * 0.5f,
-						box.y + box.height * 0.5f);
+					mirror::Point2f center(box.x + box.width * 0.5f, box.y + box.height * 0.5f);
 					center.x = center.x + delta_x * box.width;
 					center.y = center.y + delta_y * box.height;
 					float curr_width = std::exp(delta_w) * (box.width + 1);
 					float curr_height = std::exp(delta_h) * (box.height + 1);
 					mirror::Rect curr_box(center.x - curr_width * 0.5f,
 						center.y - curr_height * 0.5f, curr_width, 	curr_height);
-					curr_box.x = MAX(curr_box.x * factor_x, 0);
-					curr_box.y = MAX(curr_box.y * factor_y, 0);
-					curr_box.width = MIN(img_width - curr_box.x, curr_box.width * factor_x);
-					curr_box.height = MIN(img_height - curr_box.y, curr_box.height * factor_y);
+					curr_box.x = std::max<int>(curr_box.x * factor_x, 0);
+					curr_box.y = std::max<int>(curr_box.y * factor_y, 0);
+					curr_box.width = std::min<int>(img_width - curr_box.x, curr_box.width * factor_x);
+					curr_box.height = std::min<int>(img_height - curr_box.y, curr_box.height * factor_y);
 
 					FaceInfo face_info;
 					memset(&face_info, 0, sizeof(face_info));

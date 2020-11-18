@@ -3,7 +3,6 @@
 
 #include "../detecter.h"
 #include <vector>
-#include "opencv2/core.hpp"
 #include "ncnn/net.h"
 
 namespace mirror {

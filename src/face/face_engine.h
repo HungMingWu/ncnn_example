@@ -1,6 +1,5 @@
 #include <vector>
 #include "../common/common.h"
-#include "opencv2/core.hpp"
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(_WIN64)
     #ifdef FACE_EXPORTS
@@ -23,7 +22,8 @@ public:
 	FACE_API std::vector<mirror::Point2f> ExtractKeypoints(const mirror::ImageMetaInfo& img_src,
 		const mirror::Rect& face);
 	FACE_API std::vector<float> ExtractFeature(const mirror::ImageMetaInfo& img_face);
-	FACE_API int AlignFace(const cv::Mat& img_src, const std::vector<mirror::Point2f>& keypoints, cv::Mat* face_aligned);
+	FACE_API int AlignFace(const mirror::ImageMetaInfo& img_src, const std::vector<mirror::Point2f>& keypoints,
+		mirror::ImageMetaInfo*);
 
 	// database operation
     FACE_API int Insert(const std::vector<float>& feat, const std::string& name);

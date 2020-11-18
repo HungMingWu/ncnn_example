@@ -3,9 +3,6 @@
 #include <iostream>
 #include <string>
 
-#include "opencv2/imgproc.hpp"
-#include "opencv2/core.hpp"
-
 #if MIRROR_VULKAN
 #include "gpu.h"
 #endif // MIRROR_VULKAN

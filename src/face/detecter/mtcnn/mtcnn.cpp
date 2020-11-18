@@ -73,7 +73,7 @@ int Mtcnn::LoadModel(const char * root_path) {
 std::vector<FaceInfo> Mtcnn::DetectFace(const mirror::ImageMetaInfo& img_src) {
 	assert(img_src.data);
 	assert(initialized_);
-	cv::Size max_size = cv::Size(img_src.width, img_src.height);
+	mirror::Size max_size(img_src.width, img_src.height);
 	ncnn::Mat img_in = ncnn::Mat::from_pixels(img_src.data,
 		ncnn::Mat::PIXEL_BGR2RGB, img_src.width, img_src.height);
 	img_in.substract_mean_normalize(meanVals, normVals);
@@ -95,7 +95,7 @@ std::vector<FaceInfo> Mtcnn::DetectFace(const mirror::ImageMetaInfo& img_src) {
 std::vector<FaceInfo> Mtcnn::PDetect(const ncnn::Mat & img_in) {
 	int width = img_in.w;
 	int height = img_in.h;
-	float min_side = MIN(width, height);
+	float min_side = std::min<float>(width, height);
 	float curr_scale = float(pnet_size_) / min_face_size_;
 	min_side *= curr_scale;
 	std::vector<float> scales;
@@ -236,11 +236,11 @@ std::vector<FaceInfo> Mtcnn::ODetect(const ncnn::Mat & img_in,
 	return third_bboxes;
 }
 
-int Mtcnn::Refine(std::vector<FaceInfo>& bboxes, const cv::Size max_size) {
+int Mtcnn::Refine(std::vector<FaceInfo>& bboxes, const mirror::Size max_size) {
 	for (auto &face_info : bboxes) {
 		int width = face_info.location_.width;
 		int height = face_info.location_.height;
-		float max_side = MAX(width, height);
+		float max_side = std::max<float>(width, height);
 
 		face_info.location_.x = face_info.location_.x + 0.5 * width - 0.5 * max_side;
 		face_info.location_.y = face_info.location_.y + 0.5 * height - 0.5 * max_side;

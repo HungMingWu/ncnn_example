@@ -14,6 +14,15 @@ namespace mirror {
 #define kFaceNameDim 256
 const int threads_num = 2;
 
+struct Size
+{
+    Size() : width(0), height(0) {}
+    Size(int _w, int _h) : width(_w), height(_h) {}
+
+    int width;
+    int height;
+};
+
 template<typename _Tp>
 struct Point_
 {

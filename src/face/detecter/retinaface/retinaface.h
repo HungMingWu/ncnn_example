@@ -18,7 +18,7 @@ private:
 	std::vector<ANCHORS> anchors_generated_;
 	bool initialized_;
 	const int RPNs_[3] = { 32, 16, 8 };
-	const cv::Size inputSize_ = { 300, 300 };
+	const mirror::Size inputSize_ = { 300, 300 };
 	const float iouThreshold_ = 0.4f;
 	const float scoreThreshold_ = 0.8f;
 
