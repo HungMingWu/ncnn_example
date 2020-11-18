@@ -10,7 +10,7 @@ namespace orbwebai
 			class Impl;
 			std::unique_ptr<Impl> impl;
 		public:
-			Detector(const std::string &db_path);
+			Detector();
 			~Detector();
 			int LoadModel(const char* root_path);
 			std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src);
