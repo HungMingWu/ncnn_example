@@ -114,39 +114,6 @@ int TestAlignFace(int argc, char* argv[]) {
 	return 0;
 }
 
-int TestDetecter(int argc, char* argv[]) {
-	const char* img_file = "../..//data/images/4.jpg";
-	cv::Mat img_src = cv::imread(img_file);
-	const char* root_path = "../..//data/models";
-
-	FaceEngine* face_engine = new FaceEngine();
-	face_engine->LoadModel(root_path);
-	double start = static_cast<double>(cv::getTickCount());
-	std::vector<FaceInfo> faces = face_engine->DetectFace(toImageInfo(img_src));
-	double end = static_cast<double>(cv::getTickCount());
-	double time_cost = (end - start) / cv::getTickFrequency() * 1000;
-	std::cout << "time cost: " << time_cost << "ms" << std::endl;
-
-	for (const auto &face_info : faces) {
-		cv::rectangle(img_src, toRect(face_info.location_), cv::Scalar(0, 255, 0), 2);
-#if 1
-		for (int num = 0; num < 5; ++num) {
-			cv::Point curr_pt = cv::Point(face_info.keypoints_[num],
-										  face_info.keypoints_[num + 5]);
-			cv::circle(img_src, curr_pt, 2, cv::Scalar(255, 0, 255), 2);
-		}	
-#endif 
-	}
-	cv::imwrite("../../data/images/retinaface_result.jpg", img_src);
-	cv::imshow("result", img_src);
-	cv::waitKey(0);
-
-	delete face_engine;
-	face_engine = nullptr;
-
-	return 0;
-}
-
 int TestTrack(int argc, char* argv[]) {
 	const char* img_file = "../../data/images/4.jpg";
 	cv::Mat img_src = cv::imread(img_file);
@@ -265,7 +232,6 @@ int main(int argc, char* argv[]) {
 	// return TestLandmark(argc, argv);
 	// return TestRecognize(argc, argv);
 	return TestAlignFace(argc, argv);
-	// return TestDetecter(argc, argv);
 	// return TestTrack(argc, argv);
 	// return TestDatabase(argc, argv);
 	// return TestMask(argc, argv);

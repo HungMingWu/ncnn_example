@@ -2,8 +2,6 @@ file(GLOB_RECURSE SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
 
-message(${SRC_FILES})
-
 # list(APPEND SRCS ${LAYER_ARCH_SRC})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -fPIC -std=c++11 -fopenmp")
 add_library(VisionEngine STATIC ${SRC_FILES})
@@ -11,18 +9,21 @@ add_library(VisionEngine STATIC ${SRC_FILES})
 target_include_directories(VisionEngine
 PRIVATE
     ../third_party/eigen/
+    ../third_party/ncnn/include
 )
 
 if(MSVC)
-	message("windows")
-	include_directories(${CMAKE_SOURCE_DIR}/include/win)
-	link_directories(${CMAKE_SOURCE_DIR}/lib/win)
-	target_link_libraries(VisionEngine PUBLIC ncnn)
+	link_directories(${CMAKE_SOURCE_DIR}/third_party/ncnn/lib/win)
+	target_link_libraries(VisionEngine
+    PRIVATE
+        ncnn
+    )
 else()
-	message("Opencv Version: ${OPENCV_VERSION}" )
-	include_directories(${CMAKE_SOURCE_DIR}/include/linux)
-	link_directories(${CMAKE_SOURCE_DIR}/lib/linux)
-	target_link_libraries(VisionEngine PUBLIC ncnn)
+	link_directories(${CMAKE_SOURCE_DIR}/third_party/ncnn/lib/linux)
+	target_link_libraries(VisionEngine
+    PRIVATE
+        ncnn
+    )
 endif()
 
 if(MIRROR_OPENMP)
@@ -87,6 +88,14 @@ if(MIRROR_INSTALL_SDK)
 endif()
 
 find_package(OpenCV)
+add_executable(face_detect ${CMAKE_SOURCE_DIR}/examples/face_detect.cpp)
+target_link_libraries(face_detect
+PUBLIC
+    VisionEngine
+PRIVATE
+    ${OpenCV_LIBS}
+)
+
 if(MIRROR_BUILD_FACE)
     add_executable(face ${CMAKE_SOURCE_DIR}/examples/test_face.cpp)
     target_link_libraries(face
