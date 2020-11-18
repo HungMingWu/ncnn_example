@@ -1,6 +1,6 @@
 #include "mtcnn.h"
 #include <iostream>
-#include "opencv2/imgproc.hpp"
+#include <assert.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"

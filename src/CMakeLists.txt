@@ -7,18 +7,22 @@ message(${SRC_FILES})
 # list(APPEND SRCS ${LAYER_ARCH_SRC})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -fPIC -std=c++11 -fopenmp")
 add_library(VisionEngine STATIC ${SRC_FILES})
-find_package(OpenCV)
+
+target_include_directories(VisionEngine
+PRIVATE
+    ../third_party/eigen/
+)
 
 if(MSVC)
 	message("windows")
 	include_directories(${CMAKE_SOURCE_DIR}/include/win)
 	link_directories(${CMAKE_SOURCE_DIR}/lib/win)
-	target_link_libraries(VisionEngine PUBLIC ${OpenCV_LIBS} ncnn)
+	target_link_libraries(VisionEngine PUBLIC ncnn)
 else()
 	message("Opencv Version: ${OPENCV_VERSION}" )
 	include_directories(${CMAKE_SOURCE_DIR}/include/linux)
 	link_directories(${CMAKE_SOURCE_DIR}/lib/linux)
-	target_link_libraries(VisionEngine PUBLIC ${OpenCV_LIBS} ncnn)
+	target_link_libraries(VisionEngine PUBLIC ncnn)
 endif()
 
 if(MIRROR_OPENMP)
@@ -82,17 +86,33 @@ if(MIRROR_INSTALL_SDK)
     )
 endif()
 
+find_package(OpenCV)
 if(MIRROR_BUILD_FACE)
     add_executable(face ${CMAKE_SOURCE_DIR}/examples/test_face.cpp)
-    target_link_libraries(face PUBLIC VisionEngine)
+    target_link_libraries(face
+    PUBLIC
+        VisionEngine
+    PRIVATE
+        ${OpenCV_LIBS}
+    )
 endif()
 
 if(MIRROR_BUILD_CLASSIFIER)
     add_executable(classifier ${CMAKE_SOURCE_DIR}/examples/test_classifier.cpp)
-    target_link_libraries(classifier PUBLIC VisionEngine)
+    target_link_libraries(classifier
+    PUBLIC
+        VisionEngine
+    PRIVATE
+        ${OpenCV_LIBS}
+    )
 endif()
 
 if(MIRROR_BUILD_OBJECT)
     add_executable(object ${CMAKE_SOURCE_DIR}/examples/test_object.cpp)
-    target_link_libraries(object PUBLIC VisionEngine)
+    target_link_libraries(object
+    PUBLIC
+        VisionEngine
+    PRIVATE
+        ${OpenCV_LIBS}
+    )
 endif()

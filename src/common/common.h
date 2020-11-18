@@ -1,9 +1,9 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <algorithm>
 #include <vector>
 #include <string>
-#include "opencv2/core.hpp"
 #if defined(_OPENMP)
 #include <omp.h>
 #endif

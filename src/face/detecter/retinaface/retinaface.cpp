@@ -1,5 +1,6 @@
 #include "retinaface.h"
 #include <iostream>
+#include <assert.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"

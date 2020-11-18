@@ -1,3 +1,4 @@
+#include <math.h>
 #include "face_database.h"
 #include <iostream>
 

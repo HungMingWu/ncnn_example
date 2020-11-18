@@ -1,4 +1,5 @@
 #include "anticonv.h"
+#include <assert.h>
 #include <iostream>
 
 #if MIRROR_VULKAN

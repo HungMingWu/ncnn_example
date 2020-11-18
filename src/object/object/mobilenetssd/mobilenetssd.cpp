@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <assert.h>
 
 #if MIRROR_VULKAN
 #include "gpu.h"

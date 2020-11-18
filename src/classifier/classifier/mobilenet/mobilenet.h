@@ -19,7 +19,7 @@ private:
 	std::vector<std::string> labels_;
 	const float meanVals[3] = { 103.94f, 116.78f, 123.68f };
 	const float normVals[3] = { 0.017f,  0.017f,  0.017f };
-	const cv::Size inputSize = cv::Size(224, 224);
+	const mirror::Size inputSize = {224, 224};
 
 	int LoadLabels(const char* root_path);
 
