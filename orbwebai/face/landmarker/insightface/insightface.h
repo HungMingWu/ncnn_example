@@ -1,24 +1,27 @@
 #ifndef _FACE_INSIGHTFACE_LANDMARKER_H_
 #define _FACE_INSIGHTFACE_LANDMARKER_H_
 
-#include "../landmarker.h"
+#include <orbwebai/structure.h>
 #include "ncnn/net.h"
 
-namespace mirror {
-class InsightfaceLandmarker : public Landmarker {
-public:
-	InsightfaceLandmarker();
-	~InsightfaceLandmarker();
+namespace orbwebai
+{
+	namespace face
+	{
+		class LandmarkerBackend final {
+		public:
+			LandmarkerBackend();
+			~LandmarkerBackend();
 
-	int LoadModel(const char* root_path);
-	std::vector<orbwebai::Point2f> ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
-		const orbwebai::Rect& face) override;
+			int LoadModel(const char* root_path);
+			std::vector<orbwebai::Point2f> ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+				const orbwebai::Rect& face);
 
-private:
-	ncnn::Net insightface_landmarker_net_;
-	bool initialized;
-};
-
+		private:
+			ncnn::Net insightface_landmarker_net_;
+			bool initialized;
+		};
+	}
 }
 
 #endif // !_FACE_INSIGHTFACE_LANDMARKER_H_

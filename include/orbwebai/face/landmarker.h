@@ -1,13 +1,11 @@
 #pragma once
-#include <memory>
 #include <orbwebai/structure.h>
 namespace orbwebai
 {
 	namespace face
 	{
 		class Landmarker {
-			class Impl;
-			std::unique_ptr<Impl> impl;
+			void *impl;
 		public:
 			Landmarker();
 			~Landmarker();

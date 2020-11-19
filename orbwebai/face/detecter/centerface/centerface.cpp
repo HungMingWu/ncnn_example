@@ -8,7 +8,7 @@
 #endif // MIRROR_VULKAN
 
 using namespace orbwebai::face;
-CenterFace::CenterFace() {
+DetecterBackend::DetecterBackend() {
     centernet_ = new ncnn::Net();
     initialized_ = false;
 #if MIRROR_VULKAN
@@ -17,7 +17,7 @@ CenterFace::CenterFace() {
 #endif // MIRROR_VULKAN
 }
 
-CenterFace::~CenterFace(){
+DetecterBackend::~DetecterBackend(){
     if (centernet_) {
         centernet_->clear();
     }
@@ -26,7 +26,7 @@ CenterFace::~CenterFace(){
 #endif // MIRROR_VULKAN	
 }
 
-int CenterFace::LoadModel(const char* root_path) {
+int DetecterBackend::LoadModel(const char* root_path) {
     std::cout << "start load model." << std::endl;
     std::string param_file = std::string(root_path) + "/centerface.param";
 	std::string model_file = std::string(root_path) + "/centerface.bin";
@@ -41,7 +41,7 @@ int CenterFace::LoadModel(const char* root_path) {
     return 0;
 }
 
-std::vector<orbwebai::face::Info> CenterFace::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> DetecterBackend::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
     std::cout << "start detect." << std::endl;
     assert(initialized_);
     assert(img_src.data);

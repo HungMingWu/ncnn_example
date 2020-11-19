@@ -8,7 +8,7 @@
 #endif // MIRROR_VULKAN
 
 using namespace orbwebai::face;
-AntiConv::AntiConv() :
+DetecterBackend::DetecterBackend() :
 	anticonv_net_(new ncnn::Net()),
 	initialized_(false) {
 #if MIRROR_VULKAN
@@ -18,7 +18,7 @@ AntiConv::AntiConv() :
 
 }
 
-AntiConv::~AntiConv() {
+DetecterBackend::~DetecterBackend() {
 	if (anticonv_net_) {
 		anticonv_net_->clear();
 	}
@@ -27,7 +27,7 @@ AntiConv::~AntiConv() {
 #endif // MIRROR_VULKAN	
 }
 
-int AntiConv::LoadModel(const char * root_path) {
+int DetecterBackend::LoadModel(const char * root_path) {
 	std::string fd_param = std::string(root_path) + "/mask.param";
 	std::string fd_bin = std::string(root_path) + "/mask.bin";
 	if (anticonv_net_->load_param(fd_param.c_str()) == -1 ||
@@ -53,7 +53,7 @@ int AntiConv::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<orbwebai::face::Info> AntiConv::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> DetecterBackend::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
 	std::cout << "start face detect." << std::endl;
 	assert(initialized_);
 	assert(img_src.data);

@@ -10,7 +10,7 @@
 #endif // MIRROR_VULKAN
 
 using namespace orbwebai::face;
-Mtcnn::Mtcnn() :
+DetecterBackend::DetecterBackend() :
 	pnet_(new ncnn::Net()),
 	rnet_(new ncnn::Net()),
 	onet_(new ncnn::Net()),
@@ -26,7 +26,7 @@ Mtcnn::Mtcnn() :
 #endif // MIRROR_VULKAN
 }
 
-Mtcnn::~Mtcnn() {
+DetecterBackend::~DetecterBackend() {
 	if (pnet_) {
 		pnet_->clear();
 	}
@@ -41,7 +41,7 @@ Mtcnn::~Mtcnn() {
 #endif // MIRROR_VULKAN	
 }
 
-int Mtcnn::LoadModel(const char * root_path) {
+int DetecterBackend::LoadModel(const char * root_path) {
 	std::string pnet_param = std::string(root_path) + "/pnet.param";
 	std::string pnet_bin = std::string(root_path) + "/pnet.bin";
 	if (pnet_->load_param(pnet_param.c_str()) == -1 ||
@@ -73,7 +73,7 @@ int Mtcnn::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<orbwebai::face::Info> Mtcnn::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> DetecterBackend::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
 	assert(img_src.data);
 	assert(initialized_);
 	orbwebai::Size max_size(img_src.width, img_src.height);
@@ -95,7 +95,7 @@ std::vector<orbwebai::face::Info> Mtcnn::DetectFace(const orbwebai::ImageMetaInf
 	return faces;
 }
 
-std::vector<orbwebai::face::Info> Mtcnn::PDetect(const ncnn::Mat & img_in) {
+std::vector<orbwebai::face::Info> DetecterBackend::PDetect(const ncnn::Mat & img_in) {
 	int width = img_in.w;
 	int height = img_in.h;
 	float min_side = std::min<float>(width, height);
@@ -161,7 +161,7 @@ std::vector<orbwebai::face::Info> Mtcnn::PDetect(const ncnn::Mat & img_in) {
 	return first_bboxes;
 }
 
-std::vector<orbwebai::face::Info> Mtcnn::RDetect(const ncnn::Mat & img_in,
+std::vector<orbwebai::face::Info> DetecterBackend::RDetect(const ncnn::Mat & img_in,
 	const std::vector<orbwebai::face::Info>& first_bboxes) {
 	std::vector<orbwebai::face::Info> second_bboxes;
 	for (int i = 0; i < static_cast<int>(first_bboxes.size()); ++i) {
@@ -196,7 +196,7 @@ std::vector<orbwebai::face::Info> Mtcnn::RDetect(const ncnn::Mat & img_in,
 	return second_bboxes;;
 }
 
-std::vector<orbwebai::face::Info> Mtcnn::ODetect(const ncnn::Mat & img_in,
+std::vector<orbwebai::face::Info> DetecterBackend::ODetect(const ncnn::Mat & img_in,
 	const std::vector<orbwebai::face::Info>& second_bboxes) {
 	std::vector<orbwebai::face::Info> third_bboxes;
 	for (int i = 0; i < static_cast<int>(second_bboxes.size()); ++i) {
@@ -239,7 +239,7 @@ std::vector<orbwebai::face::Info> Mtcnn::ODetect(const ncnn::Mat & img_in,
 	return third_bboxes;
 }
 
-int Mtcnn::Refine(std::vector<orbwebai::face::Info>& bboxes, const orbwebai::Size max_size) {
+int DetecterBackend::Refine(std::vector<orbwebai::face::Info>& bboxes, const orbwebai::Size max_size) {
 	for (auto &face_info : bboxes) {
 		int width = face_info.location_.width;
 		int height = face_info.location_.height;

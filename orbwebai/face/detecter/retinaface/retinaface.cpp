@@ -8,7 +8,7 @@
 #endif // MIRROR_VULKAN
 
 using namespace orbwebai::face;
-RetinaFace::RetinaFace() :
+DetecterBackend::DetecterBackend() :
 	initialized_(false) {
 #if MIRROR_VULKAN
 	ncnn::create_gpu_instance();	
@@ -17,13 +17,13 @@ RetinaFace::RetinaFace() :
 
 }
 
-RetinaFace::~RetinaFace() {
+DetecterBackend::~DetecterBackend() {
 #if MIRROR_VULKAN
 	ncnn::destroy_gpu_instance();
 #endif // MIRROR_VULKAN	
 }
 
-int RetinaFace::LoadModel(const char * root_path) {
+int DetecterBackend::LoadModel(const char * root_path) {
 	std::string fd_param = std::string(root_path) + "/fd.param";
 	std::string fd_bin = std::string(root_path) + "/fd.bin";
 	if (retina_net_.load_param(fd_param.c_str()) == -1 ||
@@ -49,7 +49,7 @@ int RetinaFace::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<orbwebai::face::Info> RetinaFace::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
+std::vector<orbwebai::face::Info> DetecterBackend::DetectFace(const orbwebai::ImageMetaInfo& img_src) {
 	std::cout << "start face detect." << std::endl;
 	assert(initialized_);
 	assert(img_src.data);

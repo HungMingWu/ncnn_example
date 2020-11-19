@@ -1,14 +1,12 @@
 #pragma once
 #include <string>
-#include <memory>
 #include <orbwebai/structure.h>
 namespace orbwebai
 {
 	namespace face
 	{
 		class Detector {
-			class Impl;
-			std::unique_ptr<Impl> impl;
+			void* impl;
 		public:
 			Detector();
 			~Detector();

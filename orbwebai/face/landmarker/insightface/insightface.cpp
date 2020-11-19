@@ -34,8 +34,8 @@ namespace {
 	}
 }
 
-namespace mirror {
-InsightfaceLandmarker::InsightfaceLandmarker() {
+using namespace orbwebai::face;
+LandmarkerBackend::LandmarkerBackend() {
 	initialized = false;
 #if MIRROR_VULKAN
 	ncnn::create_gpu_instance();	
@@ -43,13 +43,13 @@ InsightfaceLandmarker::InsightfaceLandmarker() {
 #endif // MIRROR_VULKAN
 }
 
-InsightfaceLandmarker::~InsightfaceLandmarker() {
+LandmarkerBackend::~LandmarkerBackend() {
 #if MIRROR_VULKAN
 	ncnn::destroy_gpu_instance();
 #endif // MIRROR_VULKAN	
 }
 
-int InsightfaceLandmarker::LoadModel(const char * root_path) {
+int LandmarkerBackend::LoadModel(const char * root_path) {
 	std::string fl_param = std::string(root_path) + "/2d106.param";
 	std::string fl_bin = std::string(root_path) + "/2d106.bin";
 	if (insightface_landmarker_net_.load_param(fl_param.c_str()) == -1 ||
@@ -61,7 +61,7 @@ int InsightfaceLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<orbwebai::Point2f> InsightfaceLandmarker::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+std::vector<orbwebai::Point2f> LandmarkerBackend::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
 	const orbwebai::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
 	assert(initialized);
@@ -95,6 +95,4 @@ std::vector<orbwebai::Point2f> InsightfaceLandmarker::ExtractKeypoints(const orb
 
 	std::cout << "end extract keypoints." << std::endl;
 	return keypoints;
-}
-
 }

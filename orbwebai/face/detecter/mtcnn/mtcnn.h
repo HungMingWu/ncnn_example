@@ -2,19 +2,18 @@
 #define _FACE_MTCNN_H_
 
 #include <orbwebai/structure.h>
-#include "../detecter.h"
 #include <vector>
 #include "ncnn/net.h"
 
 namespace orbwebai {
 	namespace face
 	{
-		class Mtcnn : public IDetecter {
+		class DetecterBackend final {
 		public:
-			Mtcnn();
-			~Mtcnn();
+			DetecterBackend();
+			~DetecterBackend();
 			int LoadModel(const char* root_path);
-			std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src) override;
+			std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src);
 
 		private:
 			ncnn::Net* pnet_ = nullptr;

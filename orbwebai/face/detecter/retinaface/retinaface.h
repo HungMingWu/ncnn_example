@@ -2,19 +2,18 @@
 #define _RETINAFACE_H_
 
 #include <orbwebai/structure.h>
-#include "../detecter.h"
 #include "ncnn/net.h"
 
 namespace orbwebai {
 	namespace face
 	{
 		using ANCHORS = std::vector<orbwebai::Rect>;
-		class RetinaFace : public IDetecter {
+		class DetecterBackend final {
 		public:
-			RetinaFace();
-			~RetinaFace();
+			DetecterBackend();
+			~DetecterBackend();
 			int LoadModel(const char* root_path);
-			std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src) override;
+			std::vector<orbwebai::face::Info> DetectFace(const orbwebai::ImageMetaInfo& img_src);
 
 		private:
 			ncnn::Net retina_net_;

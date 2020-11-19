@@ -8,8 +8,8 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
-ZQLandmarker::ZQLandmarker() {
+using namespace orbwebai::face;
+LandmarkerBackend::LandmarkerBackend() {
 	zq_landmarker_net_ = new ncnn::Net();
 	initialized = false;
 #if MIRROR_VULKAN
@@ -18,14 +18,14 @@ ZQLandmarker::ZQLandmarker() {
 #endif // MIRROR_VULKAN
 }
 
-ZQLandmarker::~ZQLandmarker() {
+LandmarkerBackend::~LandmarkerBackend() {
 	zq_landmarker_net_->clear();
 #if MIRROR_VULKAN
 	ncnn::destroy_gpu_instance();
 #endif // MIRROR_VULKAN	
 }
 
-int ZQLandmarker::LoadModel(const char * root_path) {
+int LandmarkerBackend::LoadModel(const char * root_path) {
 	std::string fl_param = std::string(root_path) + "/fl.param";
 	std::string fl_bin = std::string(root_path) + "/fl.bin";
 	if (zq_landmarker_net_->load_param(fl_param.c_str()) == -1 ||
@@ -37,7 +37,7 @@ int ZQLandmarker::LoadModel(const char * root_path) {
 	return 0;
 }
 
-std::vector<orbwebai::Point2f> ZQLandmarker::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
+std::vector<orbwebai::Point2f> LandmarkerBackend::ExtractKeypoints(const orbwebai::ImageMetaInfo& img_src,
 	const orbwebai::Rect & face) {
 	std::cout << "start extract keypoints." << std::endl;
 	assert(initialized);
@@ -60,6 +60,4 @@ std::vector<orbwebai::Point2f> ZQLandmarker::ExtractKeypoints(const orbwebai::Im
 
 	std::cout << "end extract keypoints." << std::endl;
 	return keypoints;
-}
-
 }
