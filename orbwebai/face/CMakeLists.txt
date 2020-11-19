@@ -31,11 +31,20 @@ PRIVATE
 target_sources(${PROJECT_NAME}
 PRIVATE
     ../common/src/common.cpp
-    tracker.cpp
-    alignface.cpp
+    $<$<BOOL:${BUILD_FACE_ALIGN}>:alignface.cpp>
+    $<$<BOOL:${BUILD_FACE_TRACKER}>:tracker.cpp>
 )
 
-add_subdirectory(database)
 add_subdirectory(detecter)
-add_subdirectory(landmarker)
-add_subdirectory(recognizer)
+
+if (BUILD_FACE_DATABASE)
+    add_subdirectory(database)
+endif()
+
+if (BUILD_FACE_LANDMARKER)
+    add_subdirectory(landmarker)
+endif()
+
+if (BUILD_FACE_RECOGNIZER)
+    add_subdirectory(recognizer)
+endif()
