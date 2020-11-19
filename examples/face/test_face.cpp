@@ -6,7 +6,7 @@
 #include <orbwebai/face/tracker.h>
 #include <orbwebai/face/database.h>
 #include <orbwebai/face/compute.h>
-#include "image_helper.h"
+#include "../image_helper.h"
 
 int TestLandmark(int argc, char* argv[]) {
 	const char* img_file = "../..//data/images/4.jpg";

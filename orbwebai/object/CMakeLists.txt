@@ -16,6 +16,7 @@ PUBLIC
 target_link_libraries(${PROJECT_NAME}
 PRIVATE
     ncnn
+    $<$<AND:$<BOOL:${MIRROR_OPENMP}>,$<BOOL:${OpenMP_CXX_FOUND}>>:OpenMP::OpenMP_CXX>
 )
 
 target_include_directories(${PROJECT_NAME}
