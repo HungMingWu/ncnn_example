@@ -1,6 +1,6 @@
 #define FACE_EXPORTS
 #include "opencv2/opencv.hpp"
-#include "image_helper.h"
+#include "../image_helper.h"
 #include <orbwebai/face/detecter.h>
 
 int main(int argc, char* argv[]) {

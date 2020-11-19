@@ -1,17 +1,17 @@
 #define CLASSIFIER_EXPORTS
-#include "classifier_engine.h"
+#include <orbwebai/classifier/classifier.h>
 #include "opencv2/opencv.hpp"
-#include "image_helper.h"
+#include "../image_helper.h"
 
 int main(int argc, char* argv[]) {
 	const char* img_path = "../../data/images/dog.jpg";
 	cv::Mat img_src = cv::imread(img_path);
 
 	const char* root_path = "../../data/models";
-	mirror::ClassifierEngine* classifier_engine = new mirror::ClassifierEngine();
+	auto classifier = make_unique<orbwebai::classify::Classifier>();
 
-	classifier_engine->LoadModel(root_path);
-	auto images = classifier_engine->Classify(toImageInfo(img_src));
+	classifier->LoadModel(root_path);
+	auto images = classifier->Classify(toImageInfo(img_src));
 
 	int topk = images.size();
 	for (int i = 0; i < topk; ++i) {
@@ -21,8 +21,6 @@ int main(int argc, char* argv[]) {
 
 	cv::imshow("result", img_src);
 	cv::waitKey(0);
-	delete classifier_engine;
-	classifier_engine = nullptr;
 
 	cv::imwrite("../../data/images/classify_result.jpg", img_src);
 

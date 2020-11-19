@@ -1,5 +1,4 @@
 #include <memory>
-#include <detecter.h>
 #include <orbwebai/face/detecter.h>
 
 // Use for detecter_

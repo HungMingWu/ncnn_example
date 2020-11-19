@@ -1,8 +1,8 @@
 #define OBJECT_EXPORTS
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include "object_engine.h"
-#include "image_helper.h"
+#include <orbwebai/object/detecter.h>
+#include "../image_helper.h"
 #include <iostream>
 
 int main(int argc, char* argv[]) {
@@ -10,12 +10,12 @@ int main(int argc, char* argv[]) {
 	cv::Mat img_src = cv::imread(img_path);
 
 	const char* model_root_path = "../../data/models";
-	mirror::ObjectEngine* object_engine = new mirror::ObjectEngine();
+	auto objectDetector = make_unique<orbwebai::object::Detector>();
 
-	object_engine->LoadModel(model_root_path);
+	objectDetector->LoadModel(model_root_path);
 
 	double start = static_cast<double>(cv::getTickCount());
-	auto objects = object_engine->DetectObject(toImageInfo(img_src));
+	auto objects = objectDetector->DetectObject(toImageInfo(img_src));
 
 	int num_objects = static_cast<int>(objects.size());
 	for (int i = 0; i < num_objects; ++i) {
@@ -35,9 +35,6 @@ int main(int argc, char* argv[]) {
 	cv::imwrite("../../data/images/object_result.jpg", img_src);
 	cv::imshow("result", img_src);
 	cv::waitKey(0);
-
-	delete object_engine;
-	object_engine = nullptr;
 
 	return 0;
 }

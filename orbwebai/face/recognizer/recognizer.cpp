@@ -1,5 +1,4 @@
 #include <memory>
-#include <detecter.h>
 #include <orbwebai/face/recognizer.h>
 
 #include "mobilefacenet/mobilefacenet.h"

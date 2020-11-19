@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <map>
 #include <memory>
-#include <detecter.h>
 #include <common/common.h>
 #include <orbwebai/face/database.h>
 #include "stream/file_stream.h"

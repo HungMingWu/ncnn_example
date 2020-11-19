@@ -1,0 +1,13 @@
+target_sources(${PROJECT_NAME}
+PRIVATE
+    detecter.cpp
+    detecter.h
+    anticonv/anticonv.h
+    anticonv/anticonv.cpp
+    centerface/centerface.h
+    centerface/centerface.cpp
+    mtcnn/mtcnn.h
+    mtcnn/mtcnn.cpp
+    retinaface/retinaface.h
+    retinaface/retinaface.cpp
+)

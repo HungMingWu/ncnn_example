@@ -1,0 +1,9 @@
+target_sources(${PROJECT_NAME}
+PRIVATE
+    landmarker.cpp
+    landmarker.h
+    insightface/insightface.h
+    insightface/insightface.cpp
+    zqlandmarker/zqlandmarker.h
+    zqlandmarker/zqlandmarker.cpp
+)

@@ -1,5 +1,4 @@
 #include <memory>
-#include <detecter.h>
 #include <orbwebai/face/landmarker.h>
 
 // Use for landmarker
