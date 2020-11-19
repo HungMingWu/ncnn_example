@@ -54,64 +54,61 @@ namespace orbwebai
 		return anchors;
 	}
 
-}
-namespace mirror {
+	static std::vector<orbwebai::Rect> 
+	ScaleAnchors(const std::vector<orbwebai::Rect>& ratio_anchors,
+		const std::vector<float>& scales) {
+		std::vector<orbwebai::Rect> anchors;
+		for (const auto& anchor : ratio_anchors) {
+			orbwebai::Point2f center(anchor.x + anchor.width * 0.5f,
+				anchor.y + anchor.height * 0.5f);
+			for (const auto scale : scales) {
+				const float curr_width = scale * (anchor.width + 1);
+				const float curr_height = scale * (anchor.height + 1);
+				const float curr_x = center.x - curr_width * 0.5f;
+				const float curr_y = center.y - curr_height * 0.5f;
+				anchors.emplace_back(curr_x, curr_y,
+					curr_width, curr_height);
+			}
+		}
 
-std::vector<orbwebai::Rect> ScaleAnchors(const std::vector<orbwebai::Rect>& ratio_anchors,
-	const std::vector<float>& scales) {
-	std::vector<orbwebai::Rect> anchors;
-	for (const auto &anchor : ratio_anchors) {
-		orbwebai::Point2f center(anchor.x + anchor.width * 0.5f,
-			anchor.y + anchor.height * 0.5f);
-		for (const auto scale : scales) {
-			const float curr_width = scale * (anchor.width + 1);
-			const float curr_height = scale * (anchor.height + 1);
-			const float curr_x = center.x - curr_width * 0.5f;
-			const float curr_y = center.y - curr_height * 0.5f;
-			anchors.emplace_back(curr_x, curr_y,
-                                curr_width, curr_height);
+		return anchors;
+	}
+
+	std::vector<orbwebai::Rect> GenerateAnchors(const int& base_size,
+		const std::vector<float>& ratios,
+		const std::vector<float> scales) {
+		orbwebai::Rect anchor(0, 0, base_size, base_size);
+		std::vector<orbwebai::Rect> ratio_anchors = RatioAnchors(anchor, ratios);
+		return ScaleAnchors(ratio_anchors, scales);
+	}
+
+	static float InterRectArea(const orbwebai::Rect& a, const orbwebai::Rect& b) {
+		orbwebai::Point left_top(std::max(a.x, b.x), std::max(a.y, b.y));
+		orbwebai::Point right_bottom(std::min(a.br().x, b.br().x), std::min(a.br().y, b.br().y));
+		orbwebai::Point diff = right_bottom - left_top;
+		return (std::max(diff.x + 1, 0) * std::max(diff.y + 1, 0));
+	}
+
+	float ComputeIOU(const orbwebai::Rect& rect1,
+		const orbwebai::Rect& rect2, const std::string& type) {
+
+		float inter_area = InterRectArea(rect1, rect2);
+		if (type == "UNION") {
+			return inter_area / (rect1.area() + rect2.area() - inter_area);
+		}
+		else {
+			return inter_area / std::min(rect1.area(), rect2.area());
 		}
 	}
 
-	return anchors;
-}
-
-std::vector<orbwebai::Rect> GenerateAnchors(const int & base_size,
-	const std::vector<float>& ratios, 
-	const std::vector<float> scales) {
-	orbwebai::Rect anchor(0, 0, base_size, base_size);
-	std::vector<orbwebai::Rect> ratio_anchors = RatioAnchors(anchor, ratios);
-	return ScaleAnchors(ratio_anchors, scales);
-}
-
-float InterRectArea(const orbwebai::Rect & a, const orbwebai::Rect & b) {
-	orbwebai::Point left_top(std::max(a.x, b.x), std::max(a.y, b.y));
-	orbwebai::Point right_bottom(std::min(a.br().x, b.br().x), std::min(a.br().y, b.br().y));
-	orbwebai::Point diff = right_bottom - left_top;
-	return (std::max(diff.x + 1, 0) * std::max(diff.y + 1, 0));
-}
-
-float ComputeIOU(const orbwebai::Rect & rect1,
-	const orbwebai::Rect & rect2, const std::string& type) {
-
-	float inter_area = InterRectArea(rect1, rect2);
-	if (type == "UNION") {
-		return inter_area / (rect1.area() + rect2.area() - inter_area);
+	std::vector<uint8_t> CopyImageFromRange(const orbwebai::ImageMetaInfo& img_src, const orbwebai::Rect& face)
+	{
+		std::vector<uint8_t> result;
+		int channels = img_src.channels;
+		for (int y = face.y; y < face.y + face.height; y++)
+			for (int x = face.x; x < face.x + face.width; x++)
+				for (int c = 0; c < img_src.channels; c++)
+					result.push_back(img_src.data[img_src.width * y * channels + x * channels + c]);
+		return result;
 	}
-	else {
-		return inter_area / std::min(rect1.area(), rect2.area());
-	}
-}
-
-std::vector<uint8_t> CopyImageFromRange(const orbwebai::ImageMetaInfo& img_src, const orbwebai::Rect& face)
-{
-	std::vector<uint8_t> result;
-	int channels = img_src.channels;
-	for (int y = face.y; y < face.y + face.height; y++)
-		for (int x = face.x; x < face.x + face.width; x++)
-			for (int c = 0; c < img_src.channels; c++)
-				result.push_back(img_src.data[img_src.width * y * channels + x * channels + c]);
-	return result;
-}
-
 }

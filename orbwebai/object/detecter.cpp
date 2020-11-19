@@ -4,12 +4,12 @@
 
 using namespace orbwebai::object;
 class Detector::Impl {
-    std::unique_ptr<mirror::ObjectDetecter> object_detecter_;
+    std::unique_ptr<IDetecter> object_detecter_;
 public:
     Impl() {
         // detecter_factory_ = new AnticonvFactory();
 
-        object_detecter_.reset(new mirror::MobilenetSSD());
+        object_detecter_.reset(new MobilenetSSD());
     }
 
     ~Impl() {

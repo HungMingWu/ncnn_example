@@ -8,7 +8,8 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
+using namespace orbwebai::face;
+
 Mobilefacenet::Mobilefacenet() {
 	initialized_ = false;
 #if MIRROR_VULKAN
@@ -54,8 +55,6 @@ std::vector<float> Mobilefacenet::ExtractFeature(const orbwebai::ImageMetaInfo& 
 	std::cout << "end extract feature." << std::endl;
 
 	return features;
-}
-
 }
 
 

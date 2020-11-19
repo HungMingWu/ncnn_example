@@ -9,7 +9,7 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
+using namespace orbwebai::object;
 MobilenetSSD::MobilenetSSD() :
 	mobilenetssd_(new ncnn::Net()),
 	initialized_(false) {
@@ -80,6 +80,4 @@ std::vector<orbwebai::object::Info> MobilenetSSD::DetectObject(const orbwebai::I
 	std::cout << "objects number: " << objects.size() << std::endl;
 	std::cout << "end object detect." << std::endl;
 	return objects;
-}
-
 }

@@ -7,7 +7,7 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
+using namespace orbwebai::face;
 CenterFace::CenterFace() {
     centernet_ = new ncnn::Net();
     initialized_ = false;
@@ -98,6 +98,4 @@ std::vector<orbwebai::face::Info> CenterFace::DetectFace(const orbwebai::ImageMe
 		}
 	}
     return NMS(faces_tmp, nmsThreshold_);
-}
-
 }

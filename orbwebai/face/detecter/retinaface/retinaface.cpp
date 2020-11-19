@@ -7,7 +7,7 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
+using namespace orbwebai::face;
 RetinaFace::RetinaFace() :
 	initialized_(false) {
 #if MIRROR_VULKAN
@@ -140,6 +140,4 @@ std::vector<orbwebai::face::Info> RetinaFace::DetectFace(const orbwebai::ImageMe
 
 	std::cout << "end face detect." << std::endl;
 	return faces;
-}
-
 }

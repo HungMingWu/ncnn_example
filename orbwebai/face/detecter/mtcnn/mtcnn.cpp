@@ -9,7 +9,7 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
+using namespace orbwebai::face;
 Mtcnn::Mtcnn() :
 	pnet_(new ncnn::Net()),
 	rnet_(new ncnn::Net()),
@@ -253,6 +253,4 @@ int Mtcnn::Refine(std::vector<orbwebai::face::Info>& bboxes, const orbwebai::Siz
 	}
 	
 	return 0;
-}
-
 }

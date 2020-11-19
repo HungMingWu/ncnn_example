@@ -7,7 +7,7 @@
 #include "gpu.h"
 #endif // MIRROR_VULKAN
 
-namespace mirror {
+using namespace orbwebai::face;
 AntiConv::AntiConv() :
 	anticonv_net_(new ncnn::Net()),
 	initialized_(false) {
@@ -128,6 +128,4 @@ std::vector<orbwebai::face::Info> AntiConv::DetectFace(const orbwebai::ImageMeta
 
 	std::cout << "end face detect." << std::endl;
 	return faces;
-}
-
 }

@@ -5,10 +5,10 @@
 
 using namespace orbwebai::face;
 class Recognizer::Impl {
-    std::unique_ptr<mirror::Recognizer> recognizer_;
+    std::unique_ptr<IRecognizer> recognizer_;
 public:
     Impl() {
-        recognizer_.reset(new mirror::Mobilefacenet());
+        recognizer_.reset(new Mobilefacenet());
     }
 
     ~Impl() {

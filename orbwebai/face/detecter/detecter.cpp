@@ -9,8 +9,8 @@
 
 using namespace orbwebai::face;
 class Detector::Impl {
-    using FaceType = mirror::RetinaFace;
-    std::unique_ptr<mirror::Detecter> detecter_;
+    using FaceType = RetinaFace;
+    std::unique_ptr<IDetecter> detecter_;
 public:
     Impl() {
         // detecter_factory_ = new AnticonvFactory();
